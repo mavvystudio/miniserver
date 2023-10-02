@@ -1,8 +1,8 @@
 {
-  "name": "@mavvy/microservices",
+  "name": "@mavvy/miniserver",
   "version": "1.0.0",
   "type": "module",
-  "description": "A Nodejs Miscroservices Framework",
+  "description": "A Minimalist Nodejs Express Framework",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -32,11 +32,31 @@
     "mongoose": "^7.5.3"
   },
   "bin": {
-    "mvysvc": "./dist/bin/mvy.js"
+    "miniserver": "./dist/bin/miniserver.js"
   },
   "files": ["dist"],
   "repository": {
     "type": "git",
-    "url": "https://github.com/mavvy22/microservices"
+    "url": "https://github.com/mavvy22/miniserver"
+  },
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/npm",
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "package.json",
+            "CHANGELOG.md"
+          ],
+          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        }
+      ]
+    ]
   }
 }
