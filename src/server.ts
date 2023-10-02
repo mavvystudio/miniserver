@@ -42,15 +42,51 @@ export const serve = async (models: ServiceModel[], handlers: Handler[]) => {
   initModels(models);
 
   app.post('/service', async (req, res) => {
+    if (!handlers || !handlers.length) {
+      return res.json({
+        data: null,
+        error: {
+          title: 'handlers_not_found',
+        },
+      });
+    }
     const { input, serviceMethod } = req.body;
+
+    if (!serviceMethod) {
+      return res.json({
+        data: null,
+        error: {
+          title: 'service_method_not_found',
+        },
+      });
+    }
+
     const targetHandler = handlers.find((d) => d.name === serviceMethod);
-    const data = await runHandler({
-      input,
-      handler: targetHandler!.handler,
-      serviceMethod,
-    });
-    const result = { data };
-    res.json(result);
+    if (!targetHandler) {
+      return res.json({
+        data: null,
+        error: {
+          title: 'handler_not_found',
+        },
+      });
+    }
+    try {
+      const data = await runHandler({
+        input,
+        handler: targetHandler!.handler,
+        serviceMethod,
+      });
+      const result = { data };
+      res.json(result);
+    } catch (e: any) {
+      res.json({
+        data: null,
+        error: {
+          title: 'handler_error',
+          message: e.message,
+        },
+      });
+    }
   });
 
   app.listen(PORT, () => {
