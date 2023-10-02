@@ -32,7 +32,9 @@ const runHandler = async ({ input, handler }: any) => {
     model: mongoose.model,
     input,
   };
+
   const data = await handler(options);
+
   return data;
 };
 
