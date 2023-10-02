@@ -15,6 +15,15 @@ install typescript
 npm install typescript @types/node --save-dev
 ```
 
+### package.json
+
+Set type to module
+```json
+{
+  "type": "module"
+}
+```
+
 ### .env
 
 ```bash
