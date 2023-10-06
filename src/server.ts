@@ -1,6 +1,12 @@
 import express from 'express';
 import mongoose from 'mongoose';
 
+type ServiceItem = {
+  name: string;
+  url: string;
+  methods: string[];
+};
+
 type Handler = {
   name: string;
   handler: Function;
@@ -26,11 +32,12 @@ const initModels = (models: ServiceModel[]) => {
   });
 };
 
-const runHandler = async ({ input, handler }: any) => {
+const runHandler = async ({ input, handler, services }: any) => {
   const options = {
     currentModel: mongoose.model(defaultModelName),
     model: mongoose.model,
     input,
+    services,
   };
 
   const data = await handler(options);
@@ -38,7 +45,65 @@ const runHandler = async ({ input, handler }: any) => {
   return data;
 };
 
-export const serve = async (models: ServiceModel[], handlers: Handler[]) => {
+const createServices = (s: null | ServiceItem[]) => {
+  if (!s) {
+    return null;
+  }
+
+  const fetcher = async (name: string, url: string, input: any) => {
+    const res = await fetch(`${url}/service`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        serviceMethod: name,
+        input,
+      }),
+    });
+    return res.json();
+  };
+  return s.reduce(
+    (prev, current) => ({
+      ...prev,
+      [current.name]: current.methods.reduce(
+        (p, c) => ({
+          ...p,
+          [c]: (input?: any) => fetcher(c, current.url, input),
+        }),
+        {},
+      ),
+    }),
+    {},
+  );
+};
+
+const getServices = (fileData: string | null) => {
+  if (!fileData) {
+    return null;
+  }
+  const jsonData = JSON.parse(fileData);
+  const servicesData = Object.entries(jsonData).reduce(
+    (prev, current: [string, any]) =>
+      prev.concat({
+        name: current[0],
+        url: current[1].url,
+        methods: current[1].methods,
+      }),
+    [] as ServiceItem[],
+  );
+
+  return servicesData;
+};
+
+export const serve = async (
+  models: ServiceModel[],
+  handlers: Handler[],
+  servicesConfigFile: null | string,
+) => {
+  const servicesData = getServices(servicesConfigFile);
+  const services = createServices(servicesData);
+
   await mongoose.connect(process.env.MONGODB_URI!);
 
   initModels(models);
@@ -77,6 +142,7 @@ export const serve = async (models: ServiceModel[], handlers: Handler[]) => {
         input,
         handler: targetHandler!.handler,
         serviceMethod,
+        services,
       });
       const result = { data };
       res.json(result);
