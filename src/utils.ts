@@ -1,7 +1,17 @@
 import path from 'path';
 import fs from 'fs-extra';
 
-export const importFile = (path: string) =>
+export const importFile = async (path: string) => {
+  try {
+    const data = await import(path);
+
+    return data;
+  } catch (e) {
+    return undefined;
+  }
+};
+
+export const readFile = (path: string) =>
   new Promise((resolve) => {
     fs.readFile(path, (err, data) => {
       if (err) {

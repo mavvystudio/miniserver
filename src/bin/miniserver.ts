@@ -2,7 +2,7 @@
 
 import * as fs from 'fs';
 import path from 'path';
-import { exec, execSync, spawn } from 'child_process';
+import { execSync, spawn } from 'child_process';
 
 const servicesConfigFile = 'servicesconfig.json';
 const buildDir = '.miniserver';
@@ -13,13 +13,13 @@ if (argv[2] === 'start') {
 
   const fileContent = `import * as service from '@mavvy/miniserver';
 import path from 'path';
-import models from './models.js'; 
 
 const init = async () => {
-  const servicesFile = await service.utils.importFile(path.join(process.cwd(), '${servicesConfigFile}'));
+  const customServer = await service.utils.importFile(path.join(process.cwd(), '${buildDir}/server.js'));
+  const servicesFile = await service.utils.readFile(path.join(process.cwd(), '${servicesConfigFile}'));
   const handlers = await service.utils.link(process.cwd(), '${buildDir}/handlers');
 
-  service.server.serve(models, handlers, servicesFile);
+  service.server.serve(customServer, handlers, servicesFile);
 }
 
 init();

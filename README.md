@@ -5,11 +5,6 @@ Creating a Nodejs Express server should be simple. Keep It Super Simple right?
 ## Getting Started
 
 ### Install
-
-```bash
-npm install @mavvy/miniserver express mongoose
-```
-
 install typescript
 ```bash
 npm install typescript @types/node --save-dev
@@ -42,62 +37,17 @@ Set type to module
 
 ```bash
 export PORT = 3000 #YOUR_PORT
-
-export MONGODB_URI = YOUR MONGODB_URI
-
-export DEFAULT_MODEL = YOUR DEFAULT COLLECTION NAME
-```
-
-### Add models
-
-create a `models.ts` file under src
-
-```javascript
-import mongoose from 'mongoose';
-
-export default [
-  {
-    name: 'Product',
-    schema: {
-      name: String,
-      price: mongoose.SchemaTypes.Decimal128,
-      description: String,
-    },
-    schemaOptions: {
-      timestamps: true,
-    },
-  },
-];
 ```
 
 ### Create Handlers
 
 ```javascript
-// src/handlers/products.ts
+// src/handlers/hello.ts
 
-export async function handler({ model }) {
-  const data = await model('Product').find();
-
-  return data.map((doc: any) => ({
-    id: doc.id,
-    name: doc.name,
-  }));
+export async function handler() {
+  return 'hello world!';
 }
 ```
-
-```javascript
-// src/handlers/addProduct.ts
-
-export async function handler({ currentModel, input }) {
-  const doc = await currentModel.create(input);
-
-  return {
-    id: doc.id,
-    name: doc.name,
-  };
-}
-```
-
 ### Usage
 
 addProduct demo
@@ -107,10 +57,7 @@ fetch('http://localhost:3000/service', {
   headers: {
     'Content-Type': 'application/json',
     body: JSON.stringify({
-	  "serviceMethod": "addProduct",
-	  "input": {
-		"name": "myproductname02"
-	  }
+      "serviceMethod": "hello",
     })
   }
 })
@@ -121,9 +68,106 @@ returns:
 
 ```javascript
 {
-  "data": {
-    "id": "651b0ac27630523985921880",
-    "name": "myproductname02"
+  "data": "hello world!"
+}
+```
+
+#### Handling inputs
+```javascript
+// handlers/addProduct.ts
+
+export async function handler({input}) {
+  return input;
+}
+```
+Call the API
+```javascript
+fetch('http://localhost:3000/service', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    body: JSON.stringify({
+      "serviceMethod": "addProduct",
+      "input": {
+        "name": "foo"
+      }
+    })
   }
+})
+```
+
+returns:
+
+```javascript
+{
+  "data": {
+    "name": "foo"
+  }
+}
+```
+
+## Advanced Configuration
+
+### preInit
+Runs this function block before initiating the server
+
+```javascript
+// src/server.ts
+
+export const preInit = () => {
+  console.log('Hello World!');
+}
+```
+
+### mongoose integrations
+
+#### install
+```bash
+npm install mongoose
+```
+
+#### add env file
+
+```bash
+export MONGODB_URI = 'MONGO DB URI'
+```
+
+#### add server.ts
+```javascript
+// src/server.ts
+import mongoose from 'mongoose';
+
+export const preInit = async ({ addContext }) => {
+  await mongoose.connect(process.env.MONGODB_URI!);
+  console.log('connected to db');
+
+  mongoose.model(
+    'Product',
+    new mongoose.Schema({
+      name: String,
+      price: mongoose.SchemaTypes.Decimal128,
+      description: String,
+    }),
+  );
+
+  // optional, if you want to add this model function to the context of function handlers.
+  addContext({
+    model: mongoose.model,
+  });
+};
+};
+```
+
+#### add a handler
+
+```javascript
+//handlers/products.ts
+export async function handler({ context }) {
+  const data = await context.model('Product').find();
+
+  return data.map((doc: any) => ({
+    id: doc.id,
+    name: doc.name,
+  }));
 }
 ```

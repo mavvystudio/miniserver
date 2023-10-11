@@ -1,5 +1,4 @@
 import express from 'express';
-import mongoose from 'mongoose';
 
 type ServiceItem = {
   name: string;
@@ -12,30 +11,15 @@ type Handler = {
   handler: Function;
 };
 
-type ServiceModel = {
-  name: string;
-  schema: mongoose.Schema;
-  schemaOptions: mongoose.SchemaOptions;
-};
-
 const app = express();
 
 app.use(express.json());
 
 const PORT = Number(process.env.PORT);
-const defaultModelName = process.env.DEFAULT_MODEL!;
 
-const initModels = (models: ServiceModel[]) => {
-  models.forEach((item) => {
-    const schema = new mongoose.Schema(item.schema, item.schemaOptions);
-    mongoose.model(item.name, schema);
-  });
-};
-
-const runHandler = async ({ input, handler, services }: any) => {
+const runHandler = async ({ context, input, handler, services }: any) => {
   const options = {
-    currentModel: mongoose.model(defaultModelName),
-    model: mongoose.model,
+    context,
     input,
     services,
   };
@@ -96,17 +80,25 @@ const getServices = (fileData: string | null) => {
   return servicesData;
 };
 
+type CustomServer = { preInit: any };
+
 export const serve = async (
-  models: ServiceModel[],
+  customServer: null | CustomServer,
   handlers: Handler[],
   servicesConfigFile: null | string,
 ) => {
+  const context = {};
+  const addContext = (props: any) => {
+    if (props) {
+      Object.assign(context, props);
+    }
+  };
+  if (customServer) {
+    await customServer.preInit({ addContext });
+  }
+
   const servicesData = getServices(servicesConfigFile);
   const services = createServices(servicesData);
-
-  await mongoose.connect(process.env.MONGODB_URI!);
-
-  initModels(models);
 
   app.post('/service', async (req, res) => {
     if (!handlers || !handlers.length) {
@@ -139,6 +131,7 @@ export const serve = async (
     }
     try {
       const data = await runHandler({
+        context,
         input,
         handler: targetHandler!.handler,
         serviceMethod,
