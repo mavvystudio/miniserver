@@ -50,7 +50,7 @@ export async function handler() {
 ```
 ### Usage
 
-addProduct demo
+
 ```javascript
 fetch('http://localhost:3000/service', {
   method: 'POST',
