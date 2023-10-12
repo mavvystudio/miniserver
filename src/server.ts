@@ -94,7 +94,7 @@ export const serve = async (
     }
   };
   if (customServer) {
-    await customServer.preInit({ addContext });
+    await customServer.preInit({ addContext, app });
   }
 
   const servicesData = getServices(servicesConfigFile);
