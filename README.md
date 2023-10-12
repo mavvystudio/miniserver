@@ -12,10 +12,13 @@ npm install typescript @types/node --save-dev
 
 ### package.json
 
-Set type to module
+Set type to module and add start script
 ```json
 {
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "start": "miniserver start"
+  }
 }
 ```
 
