@@ -1,4 +1,4 @@
-# MiniServer - A Minimalist Nodejs Express Server
+# MiniServer - A Minimalist Nodejs HTTP Server
 
 Creating a Nodejs server should be easy. Keep It Super Simple right?
 
