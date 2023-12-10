@@ -4,11 +4,16 @@ Creating a Nodejs server should be easy. Keep It Super Simple right?
 
 ## Everything is a POST request - simple yet effective!
 
-So, what keeps this framework simple is that all requests are a POST request, so you don't need to worry about any other things - query parameters, routes, payload. You can just foucs on what features are you going to make.
+All requests are a POST request, so you don't need to worry about any other things - query parameters, routes, payload, url encoding, etc. You can just foucs on what features are you going to make.
 
 ## Getting Started
 
 ### Install
+
+```bash
+npm install @mavvy/miniserver
+```
+
 install typescript
 ```bash
 npm install typescript @types/node --save-dev
@@ -49,14 +54,16 @@ export PORT = 3000
 ### Create your API
 
 ```javascript
-// src/hello.ts
+// src/greet.ts
 
 export async function handler() {
   return 'hello world!';
 }
 ```
+
 ### Usage
 
+Client side request
 
 ```javascript
 fetch('http://localhost:3000/api', {
@@ -64,7 +71,7 @@ fetch('http://localhost:3000/api', {
   headers: {
     'Content-Type': 'application/json',
     body: JSON.stringify({
-      "handler": "hello",
+      "handler": "greet",
     })
   }
 })
@@ -112,6 +119,40 @@ returns:
   }
 }
 ```
+
+## With Mongoose
+
+Mongoose is supported out of the box, just add .env and _schema.ts and you are good to go
+
+### env
+```bash
+export MONGO_URI = your mongo uri
+```
+
+### _schema.ts
+
+```typescript
+// src/_schema.ts
+
+
+export default [{
+  name: 'Product',
+  fields: {
+    name: String,
+    productType: String
+  }
+}]
+```
+
+### usage
+
+```typescript
+// src/addProduct
+
+export const handler = async ({ db }) => db.create();
+```
+
+The above code snippet adds a Product to the collection with the given input from the post request. The handler knows the model from the name of the file which is `addProduct`, and it also has the input data so you don't have to add it explicitly. simple.
 
 ## Advanced Configuration
 

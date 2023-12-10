@@ -51,6 +51,15 @@ const createDbParams = (inputData: { handler: string; input: any }) => {
     modelName,
     model,
     create: async (input?: any) => model?.create(input || inputData.input),
+    update: async (input?: any) => {
+      const updateInput = input || inputData.input;
+      const { id, ...data } = updateInput;
+      const item = await model?.findById(id);
+      Object.assign(item, data);
+      const res = await item.save();
+      return res;
+    },
+    findById: (id?: string) => model?.findById(id || inputData.input.id),
   };
 };
 
