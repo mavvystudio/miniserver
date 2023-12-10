@@ -5,6 +5,9 @@ export const importFile = async (path: string) => {
   try {
     const data = await import(path);
 
+    if (data.default) {
+      return data.default;
+    }
     return data;
   } catch (e) {
     return undefined;
