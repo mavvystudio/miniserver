@@ -1,156 +1,117 @@
-import express from 'express';
+import http from 'node:http';
+import mongoose from 'mongoose';
 
-type ServiceItem = {
-  name: string;
-  url: string;
-  methods: string[];
-};
+import { CustomServer, Handler } from './types';
 
-type Handler = {
-  name: string;
-  handler: Function;
-};
+type Res = http.ServerResponse & { json: any };
 
-const app = express();
+type Req = http.IncomingMessage & { input: any };
 
-app.use(express.json());
+type JsonOptions = { status?: number };
 
 const PORT = Number(process.env.PORT);
 
-const runHandler = async ({ context, input, handler, services }: any) => {
-  const options = {
-    context,
-    input,
-    services,
-  };
-
-  const data = await handler(options);
-
-  return data;
+const handleCustomServer = async (
+  customServer: CustomServer,
+  server: http.Server,
+) => {
+  if (!customServer) {
+    return false;
+  }
+  if (customServer.preInit) {
+    await customServer.preInit(server);
+  }
 };
 
-const createServices = (s: null | ServiceItem[]) => {
-  if (!s) {
-    return null;
+const handleRequest = async (
+  handler: { [k: string]: Function },
+  req: Req,
+  res: Res,
+) => {
+  const input = await req.input();
+  const target = handler[input.handler];
+  if (!target) {
+    return res.json({ data: null, error: 'not_found' }, { status: 404 });
   }
+  try {
+    const data = await target({ req, res });
+    res.json({ data });
+  } catch (e: any) {
+    res.json({ data: null, error: e.message }, { status: 400 });
+  }
+};
 
-  const fetcher = async (name: string, url: string, input: any) => {
-    const res = await fetch(`${url}/service`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        serviceMethod: name,
-        input,
-      }),
-    });
-    return res.json();
-  };
-  return s.reduce(
-    (prev, current) => ({
+const privateNames = ['_server'];
+
+const createHandlersObject = (handlers: Handler[]) =>
+  handlers.reduce((prev, current) => {
+    if (privateNames.includes(current.name)) {
+      return prev;
+    }
+    return {
       ...prev,
-      [current.name]: current.methods.reduce(
-        (p, c) => ({
-          ...p,
-          [c]: (input?: any) => fetcher(c, current.url, input),
-        }),
-        {},
-      ),
-    }),
-    {},
-  );
+      [current.name]: current.handler,
+    };
+  }, {});
+
+const initDb = async () => {
+  const db = await mongoose.connect(process.env.MONGO_URI!);
+  console.log('connected to db');
+  return db;
 };
 
-const getServices = (fileData: string | null) => {
-  if (!fileData) {
-    return null;
-  }
-  const jsonData = JSON.parse(fileData);
-  const servicesData = Object.entries(jsonData).reduce(
-    (prev, current: [string, any]) =>
-      prev.concat({
-        name: current[0],
-        url: current[1].url,
-        methods: current[1].methods,
-      }),
-    [] as ServiceItem[],
-  );
+const bodyParser = (req: http.IncomingMessage) => ({
+  input: () => {
+    return new Promise((resolve, reject) => {
+      let data = '';
 
-  return servicesData;
-};
-
-type CustomServer = { preInit: any };
+      req.on('data', (chunk) => {
+        data += chunk;
+      });
+      req.on('end', () => {
+        try {
+          const d = JSON.parse(data);
+          resolve(d);
+        } catch (e) {
+          console.log('body_parse_error', data);
+          reject(null);
+        }
+      });
+    });
+  },
+});
+const json = (res: http.ServerResponse) => ({
+  json: (data: any, options?: JsonOptions) => {
+    const status = options?.status || 200;
+    res.writeHead(status, { 'Content-Type': 'application/json' });
+    res.write(JSON.stringify(data));
+    res.end();
+  },
+});
 
 export const serve = async (
-  customServer: null | CustomServer,
+  customServer: CustomServer,
   handlers: Handler[],
-  servicesConfigFile: null | string,
 ) => {
-  const context = {};
-  const addContext = (props: any) => {
-    if (props) {
-      Object.assign(context, props);
-    }
-  };
-  if (customServer) {
-    await customServer.preInit({ addContext, app });
-  }
+  const httpServer = http.createServer();
+  const handlersObj = createHandlersObject(handlers);
 
-  const servicesData = getServices(servicesConfigFile);
-  const services = createServices(servicesData);
+  await initDb();
 
-  app.post('/service', async (req, res) => {
-    if (!handlers || !handlers.length) {
-      return res.json({
-        data: null,
-        error: {
-          title: 'handlers_not_found',
-        },
-      });
-    }
-    const { input, serviceMethod } = req.body;
+  await handleCustomServer(customServer, httpServer);
 
-    if (!serviceMethod) {
-      return res.json({
-        data: null,
-        error: {
-          title: 'service_method_not_found',
-        },
-      });
-    }
-
-    const targetHandler = handlers.find((d) => d.name === serviceMethod);
-    if (!targetHandler) {
-      return res.json({
-        data: null,
-        error: {
-          title: 'handler_not_found',
-        },
-      });
-    }
-    try {
-      const data = await runHandler({
-        context,
-        input,
-        handler: targetHandler!.handler,
-        serviceMethod,
-        services,
-      });
-      const result = { data };
-      res.json(result);
-    } catch (e: any) {
-      res.json({
-        data: null,
-        error: {
-          title: 'handler_error',
-          message: e.message,
-        },
-      });
-    }
+  httpServer.listen(PORT, () => {
+    console.log(`🚀  Server ready at: ${PORT}`);
   });
 
-  app.listen(PORT, () => {
-    console.log(`🚀  Server ready at: ${PORT}`);
+  httpServer.on('request', (req: Req, res: Res) => {
+    Object.assign(res, json(res));
+    Object.assign(req, bodyParser(req));
+
+    if (req.url === '/api' && req.method === 'POST') {
+      handleRequest(handlersObj, req, res);
+    } else {
+      res.json({ data: null, error: 'not_allowed' }, { status: 400 });
+    }
   });
 };

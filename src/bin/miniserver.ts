@@ -5,7 +5,7 @@ import fse from 'fs-extra';
 import path from 'path';
 import { execSync, spawn } from 'child_process';
 
-const servicesConfigFile = 'servicesconfig.json';
+const configFile = 'miniserver.config.js';
 const buildDir = '.miniserver';
 const argv = process.argv;
 
@@ -18,10 +18,10 @@ import path from 'path';
 
 const init = async () => {
   const customServer = await service.utils.importFile(path.join(process.cwd(), '${buildDir}/server.js'));
-  const servicesFile = await service.utils.readFile(path.join(process.cwd(), '${servicesConfigFile}'));
-  const handlers = await service.utils.link(process.cwd(), '${buildDir}/handlers');
+  const configFile = await service.utils.importFile(path.join(process.cwd(), '${configFile}'));
+  const handlers = await service.utils.link(process.cwd(), '${buildDir}', ['_server.js']);
 
-  service.server.serve(customServer, handlers, servicesFile);
+  service.server.serve(customServer, handlers, configFile);
 }
 
 init();

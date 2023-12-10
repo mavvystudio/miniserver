@@ -1,6 +1,10 @@
 # MiniServer - A Minimalist Nodejs Express Server
 
-Creating a Nodejs Express server should be simple. Keep It Super Simple right?
+Creating a Nodejs server should be easy. Keep It Super Simple right?
+
+## Everything is a POST request - simple yet effective!
+
+So, what keeps this framework simple is that all requests are a POST request, so you don't need to worry about any other things - query parameters, routes, payload. You can just foucs on what features are you going to make.
 
 ## Getting Started
 
@@ -39,13 +43,13 @@ Set type to module and add start script
 ### .env
 
 ```bash
-export PORT = 3000 #YOUR_PORT
+export PORT = 3000
 ```
 
-### Create Handlers
+### Create your API
 
 ```javascript
-// src/handlers/hello.ts
+// src/hello.ts
 
 export async function handler() {
   return 'hello world!';
@@ -55,12 +59,12 @@ export async function handler() {
 
 
 ```javascript
-fetch('http://localhost:3000/service', {
+fetch('http://localhost:3000/api', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
     body: JSON.stringify({
-      "serviceMethod": "hello",
+      "handler": "hello",
     })
   }
 })
@@ -77,7 +81,7 @@ returns:
 
 #### Handling inputs
 ```javascript
-// handlers/addProduct.ts
+// addProduct.ts
 
 export async function handler({input}) {
   return input;
@@ -85,12 +89,12 @@ export async function handler({input}) {
 ```
 Call the API
 ```javascript
-fetch('http://localhost:3000/service', {
+fetch('http://localhost:3000/api', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
     body: JSON.stringify({
-      "serviceMethod": "addProduct",
+      "handler": "addProduct",
       "input": {
         "name": "foo"
       }
@@ -119,58 +123,5 @@ Runs this function block before initiating the server
 
 export const preInit = () => {
   console.log('Hello World!');
-}
-```
-
-### mongoose integrations
-
-#### install
-```bash
-npm install mongoose
-```
-
-#### add env file
-
-```bash
-export MONGODB_URI = 'MONGO DB URI'
-```
-
-#### add server.ts
-```javascript
-// src/server.ts
-import mongoose from 'mongoose';
-
-export const preInit = async ({ addContext }) => {
-  await mongoose.connect(process.env.MONGODB_URI!);
-  console.log('connected to db');
-
-  mongoose.model(
-    'Product',
-    new mongoose.Schema({
-      name: String,
-      price: mongoose.SchemaTypes.Decimal128,
-      description: String,
-    }),
-  );
-
-  // optional, if you want to add this model function to the context of function handlers.
-  addContext({
-    model: mongoose.model,
-  });
-};
-};
-```
-
-#### add a handler
-
-```javascript
-//handlers/products.ts
-export async function handler({ context }) {
-  const data = await context.model('Product').find();
-
-  return data.map((doc: any) => ({
-    id: doc.id,
-    name: doc.name,
-  }));
 }
 ```
