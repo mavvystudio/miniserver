@@ -4,7 +4,7 @@ Creating a Nodejs server should be easy. Keep It Super Simple right?
 
 ## Everything is a POST request - simple yet effective!
 
-All requests are a POST request, so you don't need to worry about any other things - query parameters, routes, payload, url encoding, etc. You can just foucs on what features are you going to make.
+All requests are POSTs, so you don't need to worry about any other things - query parameters, routes, payload, url encoding, etc. You can just focus on what features are you going to make.
 
 ## Getting Started
 

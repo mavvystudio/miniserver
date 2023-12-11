@@ -100,14 +100,22 @@ const createHandlersObject = (handlers: Handler[]) =>
   }, {});
 
 const initModels = (schema: AppSchema[]) => {
+  if (!schema) {
+    console.log('no_schema_found');
+    return false;
+  }
   schema.forEach((item) => {
     mongoose.model(item.name, new mongoose.Schema(item.fields, item.options));
   });
 };
 
 const initDb = async () => {
-  const db = await mongoose.connect(process.env.MONGO_URI!);
-  console.log('connected to db');
+  if (!process.env.MONGO_URI) {
+    console.log('no_mongo_uri_found');
+    return false;
+  }
+  const db = await mongoose.connect(process.env.MONGO_URI);
+  console.log('connected_to_db');
   return db;
 };
 
