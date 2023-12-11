@@ -12,6 +12,7 @@
     "declaration": true
   },
   "exclude": [
-    "dist"
+    "dist",
+    "example"
   ]
 }

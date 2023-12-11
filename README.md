@@ -1,10 +1,13 @@
-# MiniServer - A Minimalist Nodejs HTTP Server
+# MiniServer - A Minimalist Nodejs HTTP Server with Mongoose
 
 Creating a Nodejs server should be easy. Keep It Super Simple right?
 
 ## Everything is a POST request - simple yet effective!
 
 All requests are POSTs, so you don't need to worry about any other things - query parameters, routes, payload, url encoding, etc. You can just focus on what features are you going to make.
+
+### Example
+see examples directory [examples](/examples)
 
 ## Getting Started
 
@@ -16,7 +19,7 @@ npm install @mavvy/miniserver
 
 install typescript
 ```bash
-npm install typescript @types/node --save-dev
+npm install typescript --save-dev
 ```
 
 ### package.json
@@ -147,12 +150,25 @@ export default [{
 ### usage
 
 ```typescript
-// src/addProduct
+// src/addProduct.ts
 
 export const handler = async ({ db }) => db.create();
 ```
 
 The above code snippet adds a Product to the collection with the given input from the post request. The handler knows the model from the name of the file which is `addProduct`, and it also has the input data so you don't have to add it explicitly. simple.
+
+long version
+
+```typescript
+// src/addProduct.ts
+
+export const handler = async ({ mongoose, input }) => {
+  const model = mongoose.model('Product');
+  const res = await model.create(input);
+
+  return res;
+}
+```
 
 ## Advanced Configuration
 
