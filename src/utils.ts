@@ -1,6 +1,11 @@
 import path from 'path';
 import fs from 'fs-extra';
 
+/**
+ * Imports a file based on the path provided. If the
+ * file doesn't exists, will just return undefined
+ * instead of throwing an error.
+ */
 export const importFile = async (path: string) => {
   try {
     const data = await import(path);
@@ -14,6 +19,9 @@ export const importFile = async (path: string) => {
   }
 };
 
+/**
+ * Reads the content of a file.
+ */
 export const readFile = (path: string) =>
   new Promise((resolve) => {
     fs.readFile(path, (err, data) => {
@@ -24,6 +32,13 @@ export const readFile = (path: string) =>
     });
   });
 
+/**
+ * Returns the files of the target directory.
+ *
+ * @param cwd - current working directory
+ * @param target - path of the directory to read
+ * @param omit - files to omit
+ */
 export const link = async (cwd: string, target: string, omit?: string[]) => {
   const targetDir = path.join(cwd, target);
 
@@ -48,4 +63,16 @@ export const link = async (cwd: string, target: string, omit?: string[]) => {
   }));
 
   return items;
+};
+
+/**
+ * Converts the value to a JSON string. Returns null if
+ * the conversion fails.
+ */
+export const createJsonStr = (data: any) => {
+  try {
+    return JSON.stringify(data);
+  } catch (e) {
+    return null;
+  }
 };

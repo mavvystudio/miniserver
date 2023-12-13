@@ -1,6 +1,13 @@
 import mongoose from 'mongoose';
 import { AppSchema } from './types';
 
+/**
+ * Returns the last uppercased first-letter word
+ * from the handler name.
+ *
+ * @example
+ * addProduct will return Product
+ */
 const getModelFromHandler = (handler: string) => {
   const data = handler
     .split('')
@@ -13,12 +20,28 @@ const getModelFromHandler = (handler: string) => {
     })
     .join('')
     .split(',');
+
   const target = data.length > 1 ? data.pop() : null;
 
   return target;
 };
 
-export const createDbParams = (inputData: { handler: string; input: any }) => {
+type CreateDBParamsOptions = {
+  /**
+   * handler name.
+   */
+  handler: string;
+  /**
+   * input from the request.
+   */
+  input: any;
+};
+
+/**
+ * Creates an object of mongoose CRUD utilities which is
+ * added to the handler function parameters.
+ */
+export const createDbParams = (inputData: CreateDBParamsOptions) => {
   const modelName = getModelFromHandler(inputData.handler);
   const model = modelName ? mongoose.model(modelName) : null;
 
@@ -26,7 +49,7 @@ export const createDbParams = (inputData: { handler: string; input: any }) => {
     modelName,
     model,
     create: async (input?: any) => model?.create(input || inputData.input),
-    update: async (input?: any) => {
+    update: async (input?: { id: string } & {}) => {
       const updateInput = input || inputData.input;
       const { id, ...data } = updateInput;
       const item = await model?.findById(id);
@@ -38,6 +61,10 @@ export const createDbParams = (inputData: { handler: string; input: any }) => {
   };
 };
 
+/**
+ * Initialize mongoose db connection. Returns false
+ * if env MONGO_URI is not present.
+ */
 export const initDb = async () => {
   if (!process.env.MONGO_URI) {
     console.log('no_mongo_uri_found');
@@ -48,6 +75,9 @@ export const initDb = async () => {
   return db;
 };
 
+/**
+ * Initialize mongoose models from _schema.ts file.
+ */
 export const initModels = (schema: AppSchema[]) => {
   if (!schema) {
     console.log('no_schema_found');

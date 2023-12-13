@@ -12,6 +12,7 @@ import type {
 } from './types';
 
 import { createDbParams, initDb, initModels } from './db.js';
+import { createJsonStr } from './utils.js';
 
 const privateNames = ['_server', '_schema'];
 
@@ -44,7 +45,7 @@ const handleRequest = async (
   req: Req,
   res: Res,
 ) => {
-  const inputData = await req.input();
+  const inputData = await req.input;
   const target = handler[inputData.handler];
   if (!target) {
     return res.json(...sendError('not_found', 404));
@@ -76,32 +77,46 @@ const createHandlersObject = (handlers: Handler[]) =>
     };
   }, {});
 
+/**
+ * Returns an object that contains an input function.
+ * The input function reads the data on the
+ * Request which returns a Promise.
+ */
 const bodyParser = (req: http.IncomingMessage) => ({
-  input: () => {
-    return new Promise((resolve, reject) => {
-      let data = '';
+  input: new Promise((resolve, reject) => {
+    let data = '';
 
-      req.on('data', (chunk) => {
-        data += chunk;
-      });
-      req.on('end', () => {
-        try {
-          const d = JSON.parse(data);
-          resolve(d);
-        } catch (e) {
-          console.log('body_parse_error', data);
-          reject(null);
-        }
-      });
+    req.on('data', (chunk) => {
+      data += chunk;
     });
-  },
+    req.on('end', () => {
+      try {
+        const d = JSON.parse(data);
+        resolve(d);
+      } catch (e) {
+        console.log('body_parse_error', data);
+        reject(null);
+      }
+    });
+  }),
 });
 
 const json = (res: http.ServerResponse) => ({
   json: (data: any, options?: JsonOptions) => {
+    const jsonData = createJsonStr(data);
     const status = options?.status || 200;
+
+    if (!jsonData) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.write(
+        JSON.stringify({ data: null, error: 'invalid_json_structure' }),
+      );
+      res.end();
+      return undefined;
+    }
+
     res.writeHead(status, { 'Content-Type': 'application/json' });
-    res.write(JSON.stringify(data));
+    res.write(jsonData);
     res.end();
   },
 });
