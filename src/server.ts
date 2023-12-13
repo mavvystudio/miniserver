@@ -1,18 +1,26 @@
 import http from 'node:http';
 import mongoose from 'mongoose';
 
-import {
+import type {
   CustomServer,
   Handler,
   Req,
   Res,
   JsonOptions,
   AppSchema,
+  HandlerParams,
 } from './types';
+
+import { createDbParams, initDb, initModels } from './db.js';
 
 const privateNames = ['_server', '_schema'];
 
 const PORT = Number(process.env.PORT);
+
+const sendError = (error: string, status: number) => [
+  { data: null, error },
+  { status },
+];
 
 const handleCustomServer = async (
   customServer: CustomServer,
@@ -21,59 +29,28 @@ const handleCustomServer = async (
   if (!customServer) {
     return false;
   }
+
   if (customServer.preInit) {
     await customServer.preInit(server);
   }
 };
 
-const getModelFromHandler = (handler: string) => {
-  const data = handler
-    .split('')
-    .map((d) => {
-      const u = d.toUpperCase();
-      if (u === d) {
-        return `,${d}`;
-      }
-      return d;
-    })
-    .join('')
-    .split(',');
-  const target = data.length > 1 ? data.pop() : null;
-
-  return target;
-};
-
-const createDbParams = (inputData: { handler: string; input: any }) => {
-  const modelName = getModelFromHandler(inputData.handler);
-  const model = modelName ? mongoose.model(modelName) : null;
-
-  return {
-    modelName,
-    model,
-    create: async (input?: any) => model?.create(input || inputData.input),
-    update: async (input?: any) => {
-      const updateInput = input || inputData.input;
-      const { id, ...data } = updateInput;
-      const item = await model?.findById(id);
-      Object.assign(item, data);
-      const res = await item.save();
-      return res;
-    },
-    findById: (id?: string) => model?.findById(id || inputData.input.id),
-  };
-};
-
 const handleRequest = async (
-  handler: { [k: string]: Function },
+  handler: {
+    [k: string]: (
+      params: HandlerParams,
+    ) => Promise<{ data: null | any; error: string | null }>;
+  },
   req: Req,
   res: Res,
 ) => {
   const inputData = await req.input();
   const target = handler[inputData.handler];
   if (!target) {
-    return res.json({ data: null, error: 'not_found' }, { status: 404 });
+    return res.json(...sendError('not_found', 404));
   }
   const dbParams = createDbParams(inputData);
+
   try {
     const data = await target({
       req,
@@ -84,7 +61,7 @@ const handleRequest = async (
     });
     res.json({ data });
   } catch (e: any) {
-    res.json({ data: null, error: e.message }, { status: 400 });
+    res.json(...sendError(e.message, 400));
   }
 };
 
@@ -98,26 +75,6 @@ const createHandlersObject = (handlers: Handler[]) =>
       [current.name]: current.handler,
     };
   }, {});
-
-const initModels = (schema: AppSchema[]) => {
-  if (!schema) {
-    console.log('no_schema_found');
-    return false;
-  }
-  schema.forEach((item) => {
-    mongoose.model(item.name, new mongoose.Schema(item.fields, item.options));
-  });
-};
-
-const initDb = async () => {
-  if (!process.env.MONGO_URI) {
-    console.log('no_mongo_uri_found');
-    return false;
-  }
-  const db = await mongoose.connect(process.env.MONGO_URI);
-  console.log('connected_to_db');
-  return db;
-};
 
 const bodyParser = (req: http.IncomingMessage) => ({
   input: () => {
@@ -174,7 +131,7 @@ export const serve = async (
     if (req.url === '/api' && req.method === 'POST') {
       handleRequest(handlersObj, req, res);
     } else {
-      res.json({ data: null, error: 'not_allowed' }, { status: 400 });
+      res.json(...sendError('not_allowed', 400));
     }
   });
 };

@@ -1,4 +1,5 @@
 import http from 'node:http';
+import mongoose from 'mongoose';
 
 export type CustomServer = { preInit: any };
 
@@ -28,3 +29,15 @@ export type AppSchema = {
     update: boolean;
   };
 };
+
+export type HandlerParams = {
+  req: Req;
+  res: Res;
+  input?: any;
+  mongoose: typeof mongoose;
+  db: any;
+};
+
+export type HandlerFn = (
+  params: HandlerParams,
+) => Promise<{ data: null | any; error: null | string }>;

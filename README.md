@@ -178,7 +178,9 @@ Runs this function block before initiating the server
 ```javascript
 // src/server.ts
 
-export const preInit = () => {
+import http from 'node:http';
+
+export const preInit = (server: http.Server) => {
   console.log('Hello World!');
 }
 ```
