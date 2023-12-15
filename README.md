@@ -123,6 +123,11 @@ returns:
 }
 ```
 
+#### Handling multipart-form
+
+Just add the *handler* field, all the other fields will be automatically injected to the *input* object
+
+
 ## With Mongoose
 
 Mongoose is supported out of the box, just add .env and _schema.ts and you are good to go
