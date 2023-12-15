@@ -12,6 +12,7 @@ import type {
 } from './types';
 
 import { createDbParams, initDb, initModels } from './db.js';
+import { handleMultipartForm } from './form.js';
 import { createJsonStr } from './utils.js';
 
 const privateNames = ['_server', '_schema'];
@@ -87,14 +88,18 @@ const createHandlersObject = (handlers: Handler[]) =>
  */
 const bodyParser = (req: http.IncomingMessage) => ({
   input: new Promise((resolve) => {
-    let data = '';
+    const contentType = req.headers['content-type'];
+    if (contentType?.includes('multipart/form-data')) {
+      return handleMultipartForm(req, resolve);
+    }
+    const data: string[] = [];
 
     req.on('data', (chunk) => {
-      data += chunk;
+      data.push(chunk);
     });
     req.on('end', () => {
       try {
-        const d = JSON.parse(data);
+        const d = JSON.parse(data.join(''));
         resolve(d);
       } catch (e) {
         console.log('body_parse_error', data);
