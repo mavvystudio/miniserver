@@ -46,6 +46,9 @@ const handleRequest = async (
   res: Res,
 ) => {
   const inputData = await req.input;
+  if (!inputData) {
+    return res.json(...sendError('server_error', 500));
+  }
   const target = handler[inputData.handler];
   if (!target) {
     return res.json(...sendError('not_found', 404));
@@ -83,7 +86,7 @@ const createHandlersObject = (handlers: Handler[]) =>
  * Request which returns a Promise.
  */
 const bodyParser = (req: http.IncomingMessage) => ({
-  input: new Promise((resolve, reject) => {
+  input: new Promise((resolve) => {
     let data = '';
 
     req.on('data', (chunk) => {
@@ -95,7 +98,7 @@ const bodyParser = (req: http.IncomingMessage) => ({
         resolve(d);
       } catch (e) {
         console.log('body_parse_error', data);
-        reject(null);
+        resolve(null);
       }
     });
   }),
