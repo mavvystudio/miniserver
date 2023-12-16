@@ -2,9 +2,14 @@
 
 Creating a Nodejs server should be easy. Keep It Super Simple right?
 
-## Everything is a POST request - simple yet effective!
+## Steps to get started
+1. install the package
+2. update package.json script and type
+3. create env file
+4. create your api eg: src/greet.ts
+5. optional - create _schema.ts to create mongoose schema
 
-All requests are POSTs, so you don't need to worry about any other things - query parameters, routes, payload, url encoding, etc. You can just focus on what features are you going to make.
+If you notice, you don't need to setup a server, or code anything related to starting a server - You just go ahead and create your api. Steps 1 - 3 were just common nodejs practices, like 99% of the time you do that on your projects. Get started in the simplest terms.
 
 ### Example
 see examples directory [example](/example)
@@ -88,6 +93,10 @@ returns:
   "data": "hello world!"
 }
 ```
+
+## Everything is a POST request - simple yet effective!
+
+All requests are POSTs, so you don't need to worry about any other things - query parameters, routes, payload, url encoding, etc. You can just focus on what features are you going to make.
 
 #### Handling inputs
 ```javascript
