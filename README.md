@@ -127,6 +127,53 @@ returns:
 
 Just add the *handler* field, all the other fields will be automatically injected to the *input* object
 
+the file value contains:
+|key|description|
+|---|-----------|
+|filename|original file name|
+|encoding|file ecoding, eg: 7bit|
+|mimeType|eg: image/png|
+|fileData|buffer string of the file|
+
+##### file input example
+If you have a multipart-form data like this:
+
+```bash
+handler = myFileUpload
+myImage = my_image.png
+```
+
+You should have a *src/myfileUpload.ts* file
+```typescript
+// src/myFileUpload.ts
+
+export const handler = ({ input }) => {
+  console.log(input)
+  return 'ok'
+}
+```
+
+it should log:
+```json
+{
+  "input": {
+    "myImage": {
+      "filename": "my_image.png",
+      "encoding": "7bit",
+      "mimeType": "image/png",
+      "fileData": "
+      �PNG\r\n' +
+        '\x1A\n' +
+        '\x00\x00\x00\rIHDR\x00\x00\x07T\x00\x00\x00�\b\x06\x00\x00\x00�S^M\x00\x0
+0\fliCCPICC Profile\x00\x00H��W\x07XS�\x16�[����\x02�H\t�\tҫ�\x10Z\x04\x01����\x04
+\x12J�\tAŎ�\n' +
+...
+      "
+    }
+  }
+}
+```
+
 
 ## With Mongoose
 
