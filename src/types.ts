@@ -12,6 +12,7 @@ export type ServiceItem = {
 export type Handler = {
   name: string;
   handler: Function;
+  model?: string;
 };
 
 export type Res = http.ServerResponse & { json: any };

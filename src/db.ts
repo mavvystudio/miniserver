@@ -41,8 +41,11 @@ type CreateDBParamsOptions = {
  * Creates an object of mongoose CRUD utilities which is
  * added to the handler function parameters.
  */
-export const createDbParams = (inputData: CreateDBParamsOptions) => {
-  const modelName = getModelFromHandler(inputData.handler);
+export const createDbParams = (
+  inputData: CreateDBParamsOptions,
+  handlerModel?: string,
+) => {
+  const modelName = handlerModel || getModelFromHandler(inputData.handler);
   const model = modelName ? mongoose.model(modelName) : null;
 
   return {

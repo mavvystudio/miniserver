@@ -13,3 +13,18 @@ npm install
 export PORT = 3000
 export MONGO_URI = YOUR_MONGO_URI
 ```
+
+### Usage on Client Side
+
+```javascript
+fetch('http://localhost:3000', {
+  method: 'POST',
+  'Content-Type': 'application/json',
+  body: JSON.stringify({
+    handler: 'addProduct',
+    input: {
+      name: 'Foo'
+    }
+  })
+})
+```
