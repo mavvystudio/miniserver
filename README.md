@@ -223,6 +223,8 @@ The above code snippet adds a Product to the collection with the given input fro
 If you want to use the short version, but the handler name's substring didn't match the model name, you can export a model from your handler:
 
 ```typescript
+// src/addProduct2.ts
+
 export const model = 'Product';
 
 export const handler = async ({db }) => db.create();
