@@ -1,6 +1,6 @@
 {
   "name": "@mavvy/miniserver",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "type": "module",
   "description": "A Minimalist Nodejs Framework",
   "main": "./dist/index.js",
