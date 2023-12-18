@@ -156,9 +156,13 @@ myImage = my_image.png
 You should have a *src/myfileUpload.ts* file
 ```typescript
 // src/myFileUpload.ts
+import fs from 'fs';
 
 export const handler = ({ input }) => {
   console.log(input)
+
+  fs.writeFileSync('img.png', input.myImage.fileData);
+
   return 'ok'
 }
 ```
@@ -171,14 +175,8 @@ it should log:
       "filename": "my_image.png",
       "encoding": "7bit",
       "mimeType": "image/png",
-      "fileData": "
-      �PNG\r\n' +
-        '\x1A\n' +
-        '\x00\x00\x00\rIHDR\x00\x00\x07T\x00\x00\x00�\b\x06\x00\x00\x00�S^M\x00\x0
-0\fliCCPICC Profile\x00\x00H��W\x07XS�\x16�[����\x02�H\t�\tҫ�\x10Z\x04\x01����\x04
-\x12J�\tAŎ�\n' +
-...
-      "
+      "fileData": <Buffer 89 50 4e 47 0d 0a 1a 0a 00 00 00 0d 49 48 44 52 00 00 07 54 00 00 00 a0 08 06 00 00 00 bb 53
+ 5e 4d 00 00 0c 6c 69 43 43 50 49 43 43 20 50 72 6f 66 69 ... 47402 more bytes>
     }
   }
 }
