@@ -50,8 +50,9 @@ Set type to module and add start script
 
 ### .env
 
+Optional. You can skip this step, the default PORT is 3000.
 ```bash
-export PORT = 3000
+export PORT = 3333
 ```
 
 ### Create your API
@@ -207,9 +208,18 @@ export default [{
 export const handler = async ({ db }) => db.create();
 ```
 
-The above code snippet adds a Product to the collection with the given input from the post request. The handler knows the model from the name of the file which is `addProduct`, and it also has the input data so you don't have to add it explicitly. simple.
+The above code snippet adds a Product to the collection with the given input from the post request. The handler knows the model from the name of the file which is `addProduct`, because it gets the last uppercase first letter word and it also has the input data so you don't have to add it explicitly. simple.
 
-long version
+
+If you want to use the short version, but the handler name's substring didn't match the model name, you can export a model from your handler:
+
+```typescript
+export const model = 'Product';
+
+export const handler = async ({db }) => db.create();
+```
+
+Or if you want to use the long version:
 
 ```typescript
 // src/addProduct.ts

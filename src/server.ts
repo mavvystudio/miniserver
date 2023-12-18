@@ -17,7 +17,7 @@ import { createJsonStr } from './utils.js';
 
 const privateNames = ['_server', '_schema'];
 
-const PORT = Number(process.env.PORT);
+const PORT = Number(process.env.PORT) || 3000;
 
 const sendError = (error: string, status: number) => [
   { data: null, error },
@@ -39,9 +39,12 @@ const handleCustomServer = async (
 
 const handleRequest = async (
   handler: {
-    [k: string]: (
-      params: HandlerParams,
-    ) => Promise<{ data: null | any; error: string | null }>;
+    [k: string]: {
+      handler: (
+        params: HandlerParams,
+      ) => Promise<{ data: null | any; error: string | null }>;
+      model?: string;
+    };
   },
   req: Req,
   res: Res,
@@ -54,10 +57,10 @@ const handleRequest = async (
   if (!target) {
     return res.json(...sendError('not_found', 404));
   }
-  const dbParams = createDbParams(inputData);
+  const dbParams = createDbParams(inputData, target.model);
 
   try {
-    const data = await target({
+    const data = await target.handler({
       req,
       res,
       input: inputData.input,
@@ -77,7 +80,10 @@ const createHandlersObject = (handlers: Handler[]) =>
     }
     return {
       ...prev,
-      [current.name]: current.handler,
+      [current.name]: {
+        handler: current.handler,
+        model: current.model,
+      },
     };
   }, {});
 
