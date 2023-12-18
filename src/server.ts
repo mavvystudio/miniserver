@@ -19,7 +19,10 @@ const privateNames = ['index', '_server', '_schema'];
 
 const PORT = Number(process.env.PORT) || 3000;
 
-const sendError = (error: string, status: number) => [
+const sendError = (
+  error: string,
+  status: number,
+): [{ data: null; error: string }, { status: number }] => [
   { data: null, error },
   { status },
 ];

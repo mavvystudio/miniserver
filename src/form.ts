@@ -7,9 +7,11 @@ export const handleMultipartForm = (
 ) => {
   const data: any = {};
   const bb = busboy({ headers: req.headers });
+
   bb.on('field', (name, val) => {
     data[name] = val;
   });
+
   bb.on('file', async (name, file, info) => {
     const save = new Promise((resolve) => {
       const fileDataArr: string[] = [];
@@ -26,6 +28,7 @@ export const handleMultipartForm = (
       fileData: saveData,
     };
   });
+
   bb.on('close', () => {
     const { handler, ...input } = data;
     resolve({
@@ -33,5 +36,6 @@ export const handleMultipartForm = (
       input,
     });
   });
+
   req.pipe(bb);
 };
