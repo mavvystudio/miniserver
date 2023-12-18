@@ -230,7 +230,9 @@ export const model = 'Product';
 export const handler = async ({db }) => db.create();
 ```
 
-Or if you want to use the long version:
+**NOTE**: handler names or file names can be in kebab case.
+
+Also, if you want to use the long version:
 
 ```typescript
 // src/addProduct.ts

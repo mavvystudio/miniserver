@@ -76,3 +76,6 @@ export const createJsonStr = (data: any) => {
     return null;
   }
 };
+
+export const capitalizeFirstLetter = (str: string) =>
+  `${str.charAt(0).toUpperCase()}${str.slice(1)}`;

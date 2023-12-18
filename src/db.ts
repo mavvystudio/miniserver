@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { AppSchema } from './types';
+import { capitalizeFirstLetter } from './utils.js';
 
 /**
  * Returns the last uppercased first-letter word
@@ -9,9 +10,14 @@ import { AppSchema } from './types';
  * addProduct will return Product
  */
 const getModelFromHandler = (handler: string) => {
+  const isKebab = handler.includes('-');
+  const splitter = isKebab ? '-' : '';
   const data = handler
-    .split('')
+    .split(splitter)
     .map((d) => {
+      if (isKebab) {
+        return `,${capitalizeFirstLetter(d)}`;
+      }
       const u = d.toUpperCase();
       if (u === d) {
         return `,${d}`;

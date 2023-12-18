@@ -15,7 +15,7 @@ import { createDbParams, initDb, initModels } from './db.js';
 import { handleMultipartForm } from './form.js';
 import { createJsonStr } from './utils.js';
 
-const privateNames = ['_server', '_schema'];
+const privateNames = ['index', '_server', '_schema'];
 
 const PORT = Number(process.env.PORT) || 3000;
 
@@ -73,6 +73,12 @@ const handleRequest = async (
   }
 };
 
+/**
+ * Converts the handlers array into an Object. Where
+ * the key is the name f the file and the value
+ * is an Object that has contains
+ * handler and model.
+ */
 const createHandlersObject = (handlers: Handler[]) =>
   handlers.reduce((prev, current) => {
     if (privateNames.includes(current.name)) {

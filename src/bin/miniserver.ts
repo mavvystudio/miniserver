@@ -23,7 +23,7 @@ const init = async () => {
   const schema = await service.utils.importFile(path.join(process.cwd(), '${buildDir}/${schemaFile}'));
 
   const configFile = await service.utils.importFile(path.join(process.cwd(), '${configFile}'));
-  const handlers = await service.utils.link(process.cwd(), '${buildDir}', ['${serverFile}', '${schemaFile}']);
+  const handlers = await service.utils.link(process.cwd(), '${buildDir}', ['${serverFile}', '${schemaFile}', 'index.js']);
 
   service.server.serve(customServer, handlers, schema);
 }
