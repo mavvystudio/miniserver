@@ -1,7 +1,7 @@
 import http from 'node:http';
 import mongoose from 'mongoose';
 
-export type CustomServer = { preInit: <T>(server: http.Server) => Promise<T> };
+export type CustomServer = { preInit: (server: http.Server) => Promise<any> };
 
 export type ServiceItem = {
   name: string;

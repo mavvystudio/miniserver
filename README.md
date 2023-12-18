@@ -259,3 +259,11 @@ export const preInit = (server: http.Server) => {
   console.log('Hello World!');
 }
 ```
+
+### Change api root uri
+
+The default api root uri is **/api** , to change it - go to your .env file and set the ROOT_URI
+
+```bash
+export ROOT_URI = /foo
+```

@@ -19,6 +19,8 @@ const privateNames = ['index', '_server', '_schema'];
 
 const PORT = Number(process.env.PORT) || 3000;
 
+const ROOT_URI = process.env.ROOT_URI || '/api';
+
 const sendError = (
   error: string,
   status: number,
@@ -166,7 +168,7 @@ export const serve = async (
     Object.assign(res, json(res));
     Object.assign(req, bodyParser(req));
 
-    if (req.url === '/api' && req.method === 'POST') {
+    if (req.url === ROOT_URI && req.method === 'POST') {
       handleRequest(handlersObj, req, res);
     } else {
       res.json(...sendError('not_allowed', 400));
