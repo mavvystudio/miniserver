@@ -253,7 +253,7 @@ Runs this function block before initiating the server
 
 import http from 'node:http';
 
-export const preInit = (server: http.Server) => {
+export const preInit = async (server: http.Server) => {
   console.log('Hello World!');
 }
 ```
