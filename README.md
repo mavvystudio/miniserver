@@ -266,3 +266,12 @@ The default api root uri is **/api** , to change it - go to your .env file and s
 export ROOT_URI = /foo
 ```
 
+### Remove the data return field
+
+In case you want to return the raw data instead of wrapping those in the data field
+
+.env
+
+```bash
+export EXCLUDE_DATA_FIELD = true
+```
