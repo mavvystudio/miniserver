@@ -43,6 +43,17 @@ type CreateDBParamsOptions = {
   input: any;
 };
 
+const createMongooseModel = (modelName?: string | null) => {
+  if (modelName) {
+    try {
+      return mongoose.model(modelName);
+    } catch (e) {
+      return null;
+    }
+  }
+  return null;
+};
+
 /**
  * Creates an object of mongoose CRUD utilities which is
  * added to the handler function parameters.
@@ -52,7 +63,7 @@ export const createDbParams = (
   handlerModel?: string,
 ) => {
   const modelName = handlerModel || getModelFromHandler(inputData.handler);
-  const model = modelName ? mongoose.model(modelName) : null;
+  const model = createMongooseModel(modelName);
 
   return {
     modelName,

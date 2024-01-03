@@ -8,6 +8,7 @@ import { execSync, spawn } from 'child_process';
 const configFile = 'miniserver.config.js';
 const schemaFile = '_schema.js';
 const serverFile = '_server.js';
+const servicesFile = '_services.js';
 const buildDir = '.miniserver';
 const argv = process.argv;
 
@@ -21,11 +22,12 @@ import path from 'path';
 const init = async () => {
   const customServer = await service.utils.importFile(path.join(process.cwd(), '${buildDir}/${serverFile}'));
   const schema = await service.utils.importFile(path.join(process.cwd(), '${buildDir}/${schemaFile}'));
+  const services = await service.utils.importFile(path.join(process.cwd(), '${buildDir}/${servicesFile}'));
 
   const configFile = await service.utils.importFile(path.join(process.cwd(), '${configFile}'));
-  const handlers = await service.utils.link(process.cwd(), '${buildDir}', ['${serverFile}', '${schemaFile}', 'index.js']);
+  const handlers = await service.utils.link(process.cwd(), '${buildDir}', ['${serverFile}', '${schemaFile}', '${servicesFile}', 'index.js']);
 
-  service.server.serve(customServer, handlers, schema);
+  service.server.serve(customServer, handlers, schema, services);
 }
 
 init();

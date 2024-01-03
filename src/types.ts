@@ -53,3 +53,5 @@ export type HandlerParams<T = any> = {
 export type HandlerFn<T = any> = (
   params: HandlerParams<T>,
 ) => Promise<{ data: null | any; error: null | string }>;
+
+export type Services = { [k: string]: Omit<ServiceItem, 'name'> };

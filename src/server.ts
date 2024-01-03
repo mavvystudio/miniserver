@@ -9,15 +9,26 @@ import type {
   JsonOptions,
   AppSchema,
   HandlerParams,
+  Services,
 } from './types';
 
 import { createDbParams, initDb, initModels } from './db.js';
 import { handleMultipartForm } from './form.js';
 import { createJsonStr } from './utils.js';
+import { convert } from './service.js';
+
+const getEnvDataField = (val?: string) => {
+  if (!val) {
+    return false;
+  }
+  const v = val.toLowerCase();
+  return v === 'true';
+};
 
 const privateNames = ['index', '_server', '_schema'];
 
 const PORT = Number(process.env.PORT) || 3000;
+const excludeDataField = getEnvDataField(process.env.EXCLUDE_DATA_FIELD);
 
 const ROOT_URI = process.env.ROOT_URI || '/api';
 
@@ -51,6 +62,7 @@ const handleRequest = async (
       model?: string;
     };
   },
+  params: any,
   req: Req,
   res: Res,
 ) => {
@@ -66,13 +78,19 @@ const handleRequest = async (
 
   try {
     const data = await target.handler({
+      ...params,
       req,
       res,
       input: inputData.input,
       mongoose,
       db: dbParams,
     });
-    res.json({ data });
+
+    if (excludeDataField) {
+      res.json(data);
+    } else {
+      res.json({ data });
+    }
   } catch (e: any) {
     res.json(...sendError(e.message, 400));
   }
@@ -150,9 +168,16 @@ export const serve = async (
   customServer: CustomServer,
   handlers: Handler[],
   schema: AppSchema[],
+  services: Services | null,
 ) => {
   const httpServer = http.createServer();
   const handlersObj = createHandlersObject(handlers);
+  const servicesData = convert(services);
+  const params: any = {};
+
+  if (servicesData) {
+    params.services = servicesData.param.services;
+  }
 
   await initDb();
 
@@ -169,7 +194,7 @@ export const serve = async (
     Object.assign(req, bodyParser(req));
 
     if (req.url === ROOT_URI && req.method === 'POST') {
-      handleRequest(handlersObj, req, res);
+      handleRequest(handlersObj, params, req, res);
     } else {
       res.json(...sendError('not_allowed', 400));
     }
