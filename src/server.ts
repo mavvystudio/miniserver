@@ -110,6 +110,17 @@ const bodyParser = (req: http.IncomingMessage) => ({
     }
     const data: string[] = [];
 
+    const body = req.headers['body'] as string;
+    if (body) {
+      try {
+        const d = JSON.parse(body);
+        resolve(d);
+      } catch (e) {
+        console.log('body_parse_error', body);
+        resolve(null);
+      }
+    }
+
     req.on('data', (chunk) => {
       data.push(chunk);
     });
@@ -170,9 +181,19 @@ export const serve = async (
   });
 
   httpServer.on('request', (req: Req, res: Res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'HEAD, OPTIONS, POST, GET');
+    res.setHeader('Access-Control-Max-Age', 2592000); // 30 days
+    res.setHeader('Access-Control-Allow-Headers', '*');
+
+    if (req.method === 'OPTIONS') {
+      res.statusCode = 204;
+      res.end();
+      return;
+    }
+
     Object.assign(res, json(res));
     Object.assign(req, bodyParser(req));
-
     const rootUri = config?.ROOT_URI || '/api';
 
     if (req.url === rootUri && req.method === 'POST') {
