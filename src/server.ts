@@ -119,6 +119,7 @@ const bodyParser = (req: http.IncomingMessage) => ({
         console.log('body_parse_error', body);
         resolve(null);
       }
+      return null;
     }
 
     req.on('data', (chunk) => {
