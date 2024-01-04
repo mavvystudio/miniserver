@@ -173,7 +173,7 @@ export const serve = async (
     Object.assign(res, json(res));
     Object.assign(req, bodyParser(req));
 
-    const rootUri = config.ROOT_URI || '/api';
+    const rootUri = config?.ROOT_URI || '/api';
 
     if (req.url === rootUri && req.method === 'POST') {
       handleRequest(handlersObj, params, req, res);
