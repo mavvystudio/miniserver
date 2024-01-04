@@ -83,7 +83,7 @@ const applyContext =
     return res.data;
   };
 
-export function convert(services: Services | null) {
+export function convert(services?: Services | null) {
   if (!services) {
     return null;
   }

@@ -1,7 +1,11 @@
 import http from 'node:http';
 import mongoose from 'mongoose';
 
-export type CustomServer = { preInit: (server: http.Server) => Promise<any> };
+export type Config = {
+  PRE_INIT?: (server: http.Server) => Promise<any>;
+  SERVICES?: Services;
+  ROOT_URI?: string;
+};
 
 export type ServiceItem = {
   name: string;
@@ -12,7 +16,7 @@ export type ServiceItem = {
 export type Handler = {
   name: string;
   handler: Function;
-  model?: string;
+  model?: string | null;
 };
 
 export type Res = http.ServerResponse & {

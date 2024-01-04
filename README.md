@@ -1,15 +1,58 @@
-# MiniServer - A Minimalist Nodejs HTTP Server with Mongoose
+# MiniServer - A Minimalist Nodejs HTTP Server
 
 Creating a Nodejs server should be easy. Keep It Super Simple right?
 
-## Steps to get started
-1. install the package
-2. update package.json script and type
-3. create env file
-4. create your api eg: src/greet.ts
-5. optional - create _schema.ts to create mongoose schema
+## Features
 
-If you notice, you don't need to setup a server, or code anything related to starting a server - You just go ahead and create your api. Steps 1 - 3 were just common nodejs practices, like 99% of the time you do that on your projects. Get started in the simplest terms.
+- File-name based api
+- File upload via multipart form supported, no need to install middlewares
+- Mongoose supported out of the box
+
+## Preview
+
+See this code snippet:
+
+```typescript
+/**
+multipart-form data:
+
+handler = myFileUpload
+myImage = my_image.png
+*/
+
+// src/myFileUpload.ts
+import fs from 'fs';
+
+export const handler = ({ input }) => {
+  // move file to root directory and name the file img.png
+  fs.writeFileSync('img.png', input.myImage.fileData);
+}
+```
+
+The form data is in the input parameter, which can be accessed right awayt from the function - See no imports and no middleware Mom!, just plain simple right?
+
+How about mongoose crud?
+
+```typescript
+// src/addProduct.ts
+
+export const handler = async ({ db }) => db.create();
+```
+
+The above code snippet will add data to the mongo database. But where's the input? Believe me, it's in there, you don't need to explicitly add it, the handler knows your input data.
+
+Want to see the long version?
+
+```typescript
+// src/addProduct.ts
+
+export const handler = async ({ mongoose, input }) => {
+  const model = mongoose.model('Product');
+  const res = await model.create(input);
+
+  return res;
+}
+```
 
 ### Example
 see examples directory [example](/example)
@@ -249,7 +292,7 @@ export const handler = async ({ mongoose, input }) => {
 Runs this function block before initiating the server
 
 ```javascript
-// src/server.ts
+// src/_config.ts
 
 import http from 'node:http';
 
@@ -262,16 +305,8 @@ export const preInit = async (server: http.Server) => {
 
 The default api root uri is **/api** , to change it - go to your .env file and set the ROOT_URI
 
-```bash
-export ROOT_URI = /foo
+```javascript
+// src/_config.ts
+export const ROOT_URI = '/foo';
 ```
 
-### Remove the data return field
-
-In case you want to return the raw data instead of wrapping those in the data field
-
-.env
-
-```bash
-export EXCLUDE_DATA_FIELD = true
-```

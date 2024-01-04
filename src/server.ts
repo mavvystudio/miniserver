@@ -2,14 +2,13 @@ import http from 'node:http';
 import mongoose from 'mongoose';
 
 import type {
-  CustomServer,
+  Config,
   Handler,
   Req,
   Res,
   JsonOptions,
   AppSchema,
   HandlerParams,
-  Services,
 } from './types';
 
 import { createDbParams, initDb, initModels } from './db.js';
@@ -17,20 +16,9 @@ import { handleMultipartForm } from './form.js';
 import { createJsonStr } from './utils.js';
 import { convert } from './service.js';
 
-const getEnvDataField = (val?: string) => {
-  if (!val) {
-    return false;
-  }
-  const v = val.toLowerCase();
-  return v === 'true';
-};
-
-const privateNames = ['index', '_server', '_schema'];
+const privateNames = ['index', '_config', '_schema'];
 
 const PORT = Number(process.env.PORT) || 3000;
-const excludeDataField = getEnvDataField(process.env.EXCLUDE_DATA_FIELD);
-
-const ROOT_URI = process.env.ROOT_URI || '/api';
 
 const sendError = (
   error: string,
@@ -40,16 +28,13 @@ const sendError = (
   { status },
 ];
 
-const handleCustomServer = async (
-  customServer: CustomServer,
-  server: http.Server,
-) => {
-  if (!customServer) {
-    return false;
+const handlePreInit = async (config: Config, server: http.Server) => {
+  if (!config) {
+    return null;
   }
 
-  if (customServer.preInit) {
-    await customServer.preInit(server);
+  if (config.PRE_INIT) {
+    await config.PRE_INIT(server);
   }
 };
 
@@ -86,11 +71,7 @@ const handleRequest = async (
       db: dbParams,
     });
 
-    if (excludeDataField) {
-      res.json(data);
-    } else {
-      res.json({ data });
-    }
+    res.json({ data });
   } catch (e: any) {
     res.json(...sendError(e.message, 400));
   }
@@ -165,14 +146,13 @@ const json = (res: http.ServerResponse) => ({
 });
 
 export const serve = async (
-  customServer: CustomServer,
+  config: Config,
   handlers: Handler[],
   schema: AppSchema[],
-  services: Services | null,
 ) => {
   const httpServer = http.createServer();
   const handlersObj = createHandlersObject(handlers);
-  const servicesData = convert(services);
+  const servicesData = convert(config.SERVICES);
   const params: any = {};
 
   if (servicesData) {
@@ -183,7 +163,7 @@ export const serve = async (
 
   initModels(schema);
 
-  await handleCustomServer(customServer, httpServer);
+  await handlePreInit(config, httpServer);
 
   httpServer.listen(PORT, () => {
     console.log(`🚀  Server ready at: ${PORT}`);
@@ -193,7 +173,9 @@ export const serve = async (
     Object.assign(res, json(res));
     Object.assign(req, bodyParser(req));
 
-    if (req.url === ROOT_URI && req.method === 'POST') {
+    const rootUri = config.ROOT_URI || '/api';
+
+    if (req.url === rootUri && req.method === 'POST') {
       handleRequest(handlersObj, params, req, res);
     } else {
       res.json(...sendError('not_allowed', 400));
