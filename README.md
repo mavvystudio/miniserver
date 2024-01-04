@@ -14,22 +14,31 @@ See this code snippet:
 
 ```typescript
 /**
-multipart-form data:
-
-handler = myFileUpload
-myImage = my_image.png
+* For example, if you have a multipart-form data similar to this:
+*
+*  handler = myFileUpload
+*  myImage = my_image.png
 */
 
-// src/myFileUpload.ts
+/**
+* Your api file should be located at src/myFileUpload.ts
+* see the filename should be the same as your "handler"
+* field on your multipart form data.
+*/
 import fs from 'fs';
 
 export const handler = ({ input }) => {
-  // move file to root directory and name the file img.png
+  /**
+  * this will create a file to the root directory and name the file img.png
+  */
+
   fs.writeFileSync('img.png', input.myImage.fileData);
 }
+
+// Pretty straightforward
 ```
 
-The form data is in the input parameter, which can be accessed right awayt from the function - See no imports and no middleware Mom!, just plain simple right?
+The form data is in the input parameter, which can be accessed right away from the function - See no imports and no middleware Mom!, just plain simple right?
 
 How about mongoose crud?
 
