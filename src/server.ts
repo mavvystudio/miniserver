@@ -183,9 +183,6 @@ export const serve = async (
 
   httpServer.on('request', (req: Req, res: Res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'HEAD, OPTIONS, POST, GET');
-    res.setHeader('Access-Control-Max-Age', 2592000); // 30 days
-    res.setHeader('Access-Control-Allow-Headers', '*');
 
     if (req.method === 'OPTIONS') {
       res.statusCode = 204;
