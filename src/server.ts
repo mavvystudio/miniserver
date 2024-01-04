@@ -152,7 +152,7 @@ export const serve = async (
 ) => {
   const httpServer = http.createServer();
   const handlersObj = createHandlersObject(handlers);
-  const servicesData = convert(config.SERVICES);
+  const servicesData = convert(config?.SERVICES);
   const params: any = {};
 
   if (servicesData) {
