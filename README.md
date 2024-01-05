@@ -68,7 +68,13 @@ see examples directory [example](/example)
 
 ## Getting Started
 
-### Install
+### Automatic Install
+
+```bash
+npx create-miniserver my-project
+```
+
+### Manual Install
 
 ```bash
 npm install @mavvy/miniserver
