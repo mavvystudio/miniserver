@@ -4,9 +4,9 @@ Creating a Nodejs server should be easy. Keep It Super Simple right?
 
 ## Features
 
-- File-name based api
-- File upload via multipart form supported, no need to install middlewares
-- Mongoose supported out of the box
+- Filename based api *(Inspired by Nextjs api routes)*.
+- File upload via multipart form supported, no need to install middlewares.
+- Mongoose supported out of the box, with utility functions.
 
 ## Preview
 
@@ -18,9 +18,8 @@ See this code snippet:
 *
 *  handler = myFileUpload
 *  myImage = my_image.png
-*/
-
-/**
+*
+* And then,
 * Your api file should be located at src/myFileUpload.ts
 * see the filename should be the same as your "handler"
 * field on your multipart form data.
@@ -29,13 +28,11 @@ import fs from 'fs';
 
 export const handler = ({ input }) => {
   /**
-  * this will create a file to the root directory and name the file img.png
+  * this will create a file to the root directory and
+  * name the file img.png
   */
-
   fs.writeFileSync('img.png', input.myImage.fileData);
 }
-
-// Pretty straightforward
 ```
 
 The form data is in the input parameter, which can be accessed right away from the function - See no imports and no middleware Mom!, just plain simple right?
@@ -85,7 +82,7 @@ install typescript
 npm install typescript --save-dev
 ```
 
-### package.json
+#### package.json
 
 Set type to module and add start script
 ```json
@@ -97,7 +94,7 @@ Set type to module and add start script
 }
 ```
 
-### sample tsconfig.json file
+#### sample tsconfig.json file
 ```json
 {
   "compilerOptions": {
@@ -111,7 +108,7 @@ Set type to module and add start script
 }
 ```
 
-### .env
+#### .env
 
 Optional. You can skip this step, the default PORT is 3000.
 ```bash
@@ -322,6 +319,7 @@ The default api root uri is **/api** , to change it - go to your .env file and s
 
 ```javascript
 // src/_config.ts
+
 export const ROOT_URI = '/foo';
 ```
 
@@ -329,6 +327,6 @@ export const ROOT_URI = '/foo';
 
 ```javascript
 // src/_config.ts
+
 export const DISABLE_CORS = true;
 ```
-
