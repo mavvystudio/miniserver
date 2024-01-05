@@ -35,7 +35,7 @@ export type AppSchema = {
   name: string;
   fields: any;
   options?: any;
-  apiActions: {
+  apiActions?: {
     create: boolean;
     update: boolean;
   };
@@ -60,3 +60,14 @@ export type HandlerFn<T = any> = (
 ) => Promise<{ data: null | any; error: null | string }>;
 
 export type Services = { [k: string]: Omit<ServiceItem, 'name'> };
+
+export type CreateDBParamsOptions = {
+  /**
+   * handler name.
+   */
+  handler: string;
+  /**
+   * input from the request.
+   */
+  input: any;
+};

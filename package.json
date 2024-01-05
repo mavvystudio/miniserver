@@ -7,7 +7,7 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\"",
+    "test": "jest --watch",
     "build": "tsc"
   },
   "keywords": [],
@@ -16,8 +16,11 @@
   "devDependencies": {
     "@types/busboy": "^1.5.3",
     "@types/fs-extra": "^9.0.13",
+    "@types/jest": "~29.5.4",
     "@types/node": "^20.7.1",
     "fs-extra": "^11.1.0",
+    "jest": "~29.6.4",
+    "ts-jest": "~29.1.1",
     "typescript": "^5.2.2"
   },
   "dependencies": {

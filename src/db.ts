@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { AppSchema } from './types';
+import { AppSchema, CreateDBParamsOptions } from './types';
 import { capitalizeFirstLetter } from './utils.js';
 
 /**
@@ -9,7 +9,7 @@ import { capitalizeFirstLetter } from './utils.js';
  * @example
  * addProduct will return Product
  */
-const getModelFromHandler = (handler: string) => {
+export const getModelFromHandler = (handler: string) => {
   const isKebab = handler.includes('-');
   const splitter = isKebab ? '-' : '';
   const data = handler
@@ -32,22 +32,12 @@ const getModelFromHandler = (handler: string) => {
   return target;
 };
 
-type CreateDBParamsOptions = {
-  /**
-   * handler name.
-   */
-  handler: string;
-  /**
-   * input from the request.
-   */
-  input: any;
-};
-
-const createMongooseModel = (modelName?: string | null) => {
+export const createMongooseModel = (modelName?: string | null) => {
   if (modelName) {
     try {
       return mongoose.model(modelName);
-    } catch (e) {
+    } catch (e: any) {
+      console.log(e.message);
       return null;
     }
   }
