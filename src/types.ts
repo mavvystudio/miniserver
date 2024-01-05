@@ -5,6 +5,7 @@ export type Config = {
   PRE_INIT?: (server: http.Server) => Promise<any>;
   SERVICES?: Services;
   ROOT_URI?: string;
+  DISABLE_CORS?: boolean;
 };
 
 export type ServiceItem = {

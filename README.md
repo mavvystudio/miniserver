@@ -301,17 +301,17 @@ export const handler = async ({ mongoose, input }) => {
 }
 ```
 
-## Advanced Configuration
+## Advanced Configuration - _config.ts
 
-### preInit
-Runs this function block before initiating the server
+### PRE_INIT hook
+Runs the PRE_INIT hook before initiating the server
 
 ```javascript
 // src/_config.ts
 
 import http from 'node:http';
 
-export const preInit = async (server: http.Server) => {
+export const PRE_INIT = async (server: http.Server) => {
   console.log('Hello World!');
 }
 ```
@@ -323,5 +323,12 @@ The default api root uri is **/api** , to change it - go to your .env file and s
 ```javascript
 // src/_config.ts
 export const ROOT_URI = '/foo';
+```
+
+### Disable CORS
+
+```javascript
+// src/_config.ts
+export const DISABLE_CORS = true;
 ```
 
