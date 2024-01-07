@@ -51,11 +51,10 @@ describe('db', () => {
     }));
 
     it('should initialize db connection', () => {
-      process.env.MONGO_URI = 'foo';
       const spy = jest
         .spyOn(mongoose, 'connect')
         .mockReturnValue(new Promise((resolve) => resolve(true as any)));
-      db.initDb();
+      db.initDb('foo');
       expect(spy).toHaveBeenCalledWith('foo');
     });
   });

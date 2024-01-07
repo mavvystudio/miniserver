@@ -37,7 +37,6 @@ export const createMongooseModel = (modelName?: string | null) => {
     try {
       return mongoose.model(modelName);
     } catch (e: any) {
-      console.log(e.message);
       return null;
     }
   }
@@ -75,12 +74,12 @@ export const createDbParams = (
  * Initialize mongoose db connection. Returns false
  * if env MONGO_URI is not present.
  */
-export const initDb = async () => {
-  if (!process.env.MONGO_URI) {
+export const initDb = async (uri?: string) => {
+  if (!uri) {
     console.log('no_mongo_uri_found');
     return false;
   }
-  const db = await mongoose.connect(process.env.MONGO_URI);
+  const db = await mongoose.connect(uri);
   console.log('connected_to_db');
   return db;
 };

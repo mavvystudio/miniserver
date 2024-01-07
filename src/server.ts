@@ -15,12 +15,12 @@ import { createDbParams, initDb, initModels } from './db.js';
 import { handleMultipartForm } from './form.js';
 import { createJsonStr } from './utils.js';
 import { convert } from './service.js';
+import { createHandlersObject } from './handler.js';
 
-const privateNames = ['index', '_config', '_schema'];
-
+const defaultRootUri = '/api';
 const PORT = Number(process.env.PORT) || 3000;
 
-const sendError = (
+export const sendError = (
   error: string,
   status: number,
 ): [{ data: null; error: string }, { status: number }] => [
@@ -28,7 +28,10 @@ const sendError = (
   { status },
 ];
 
-const handlePreInit = async (config: Config, server: http.Server) => {
+export const handlePreInit = async (
+  config: Config | null | undefined,
+  server: http.Server,
+) => {
   if (!config) {
     return null;
   }
@@ -38,7 +41,7 @@ const handlePreInit = async (config: Config, server: http.Server) => {
   }
 };
 
-const handleRequest = async (
+export const handleRequest = async (
   handler: {
     [k: string]: {
       handler: (
@@ -52,16 +55,19 @@ const handleRequest = async (
   res: Res,
 ) => {
   const inputData = await req.input;
+
   if (!inputData) {
     return res.json(...sendError('server_error', 500));
   }
+
   const target = handler[inputData.handler];
+
   if (!target) {
     return res.json(...sendError('not_found', 404));
   }
-  const dbParams = createDbParams(inputData, target.model);
 
   try {
+    const dbParams = createDbParams(inputData, target.model);
     const data = await target.handler({
       ...params,
       req,
@@ -76,26 +82,6 @@ const handleRequest = async (
     res.json(...sendError(e.message, 400));
   }
 };
-
-/**
- * Converts the handlers array into an Object. Where
- * the key is the name f the file and the value
- * is an Object that has contains
- * handler and model.
- */
-const createHandlersObject = (handlers: Handler[]) =>
-  handlers.reduce((prev, current) => {
-    if (privateNames.includes(current.name)) {
-      return prev;
-    }
-    return {
-      ...prev,
-      [current.name]: {
-        handler: current.handler,
-        model: current.model,
-      },
-    };
-  }, {});
 
 /**
  * Returns an object that contains an input function.
@@ -157,7 +143,7 @@ const json = (res: http.ServerResponse) => ({
   },
 });
 
-const handleCors = (res: Res, config: Config) => {
+export const handleCors = (res: Res, config: Config) => {
   if (config.DISABLE_CORS) {
     return false;
   }
@@ -167,31 +153,16 @@ const handleCors = (res: Res, config: Config) => {
   res.setHeader('Access-Control-Allow-Headers', '*');
 };
 
-export const serve = async (
-  config: Config,
-  handlers: Handler[],
-  schema: AppSchema[],
-) => {
-  const httpServer = http.createServer();
-  const handlersObj = createHandlersObject(handlers);
-  const servicesData = convert(config?.SERVICES);
-  const params: any = {};
+export const validateRequest = (req: Req, rootUri: string) => {
+  return req.url === rootUri && req.method === 'POST';
+};
 
-  if (servicesData) {
-    params.services = servicesData.param.services;
-  }
+export const createRootUri = (config: Config) => {
+  return config?.ROOT_URI || defaultRootUri;
+};
 
-  await initDb();
-
-  initModels(schema);
-
-  await handlePreInit(config, httpServer);
-
-  httpServer.listen(PORT, () => {
-    console.log(`🚀  Server ready at: ${PORT}`);
-  });
-
-  httpServer.on('request', (req: Req, res: Res) => {
+const httpServerOnRequest =
+  (config: Config, handlersObj: any, params: any) => (req: Req, res: Res) => {
     handleCors(res, config);
 
     if (req.method === 'OPTIONS') {
@@ -202,12 +173,40 @@ export const serve = async (
 
     Object.assign(res, json(res));
     Object.assign(req, bodyParser(req));
-    const rootUri = config?.ROOT_URI || '/api';
 
-    if (req.url === rootUri && req.method === 'POST') {
+    const rootUri = createRootUri(config);
+    const isValidRequest = validateRequest(req, rootUri);
+
+    if (isValidRequest) {
       handleRequest(handlersObj, params, req, res);
     } else {
       res.json(...sendError('not_allowed', 400));
     }
+  };
+
+export const serve = async (
+  config: Config,
+  handlers: Handler[],
+  schema: AppSchema[],
+) => {
+  const httpServer = http.createServer();
+  const handlersObj = createHandlersObject(handlers);
+  const servicesData = convert(config?.SERVICES);
+  const params = {
+    services: servicesData ? servicesData.param.services : undefined,
+  };
+
+  await initDb(process.env.MONGO_URI);
+
+  initModels(schema);
+
+  await handlePreInit(config, httpServer);
+
+  httpServer.listen(PORT, () => {
+    console.log(`🚀  Server ready at: ${PORT}`);
   });
+
+  const requestHandler = httpServerOnRequest(config, handlersObj, params);
+
+  httpServer.on('request', requestHandler);
 };
