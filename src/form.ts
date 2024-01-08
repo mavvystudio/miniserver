@@ -14,13 +14,13 @@ export const handleMultipartForm = (
 
   bb.on('file', async (name, file, info) => {
     const fileDataArr: Buffer[] = [];
-    const save = new Promise((resolve) => {
+    const save = new Promise((r) => {
       file.on('data', (d) => {
         fileDataArr.push(d);
       });
       file.on('close', () => {
         const str = fileDataArr.join('');
-        resolve(Buffer.concat(fileDataArr, str.length));
+        r(Buffer.concat(fileDataArr, str.length));
       });
     });
     const saveData = await save;

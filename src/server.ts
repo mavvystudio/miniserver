@@ -83,13 +83,8 @@ export const handleRequest = async (
   }
 };
 
-/**
- * Returns an object that contains an input function.
- * The input function reads the data on the
- * Request which returns a Promise.
- */
-const bodyParser = (req: http.IncomingMessage) => ({
-  input: new Promise((resolve) => {
+export const generateInput = (req: http.IncomingMessage) => {
+  return new Promise((resolve) => {
     const contentType = req.headers['content-type'];
     if (contentType?.includes('multipart/form-data')) {
       return handleMultipartForm(req, resolve);
@@ -120,27 +115,31 @@ const bodyParser = (req: http.IncomingMessage) => ({
         resolve(null);
       }
     });
-  }),
+  });
+};
+
+/**
+ * Returns an object that contains an input function.
+ * The input function reads the data on the
+ * Request which returns a Promise.
+ */
+export const bodyParser = (req: http.IncomingMessage) => ({
+  input: generateInput(req),
 });
 
-const json = (res: http.ServerResponse) => ({
-  json: (data: any, options?: JsonOptions) => {
+export const generateJsonResponse = (res: http.ServerResponse) => {
+  return (data: any, options?: JsonOptions) => {
     const jsonData = createJsonStr(data);
     const status = options?.status || 200;
-
-    if (!jsonData) {
-      res.writeHead(500, { 'Content-Type': 'application/json' });
-      res.write(
-        JSON.stringify({ data: null, error: 'invalid_json_structure' }),
-      );
-      res.end();
-      return undefined;
-    }
 
     res.writeHead(status, { 'Content-Type': 'application/json' });
     res.write(jsonData);
     res.end();
-  },
+  };
+};
+
+const json = (res: http.ServerResponse) => ({
+  json: generateJsonResponse(res),
 });
 
 export const handleCors = (res: Res, config: Config) => {
