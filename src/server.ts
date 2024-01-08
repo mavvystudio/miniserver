@@ -142,8 +142,8 @@ const json = (res: http.ServerResponse) => ({
   json: generateJsonResponse(res),
 });
 
-export const handleCors = (res: Res, config: Config) => {
-  if (config.DISABLE_CORS) {
+export const handleCors = (res: Res, config?: Config) => {
+  if (config?.DISABLE_CORS) {
     return false;
   }
   res.setHeader('Access-Control-Allow-Origin', '*');
