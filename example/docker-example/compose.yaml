@@ -1,0 +1,16 @@
+services:
+  article:
+    build:
+      context: article
+    ports:
+      - 3001:3001
+  comment:
+    build:
+      context: comment
+    ports:
+      - 3002:3002
+  blog:
+    build:
+      context: blog
+    ports:
+      - 3003:3003
