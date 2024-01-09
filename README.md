@@ -7,6 +7,7 @@ Creating a Nodejs server should be easy. Keep It Super Simple right?
 - Filename based api *(Inspired by Nextjs api routes)*.
 - File upload via multipart form supported, no need to install middlewares.
 - Mongoose supported out of the box, with utility functions.
+- Miscroservices integration with other miniservers. see [Miscroservice Example](/example/docker-example)
 
 ## Preview
 
@@ -58,6 +59,29 @@ export const handler = async ({ mongoose, input }) => {
 
   return res;
 }
+```
+
+How about microservices?
+
+```typescript
+/**
+ * main service miniserver
+ * 
+ * mainService/src/someApi.ts
+ */
+export const handler = async ({ services, input }) => {
+  const product = await services.products.getItem(input.id);
+
+  return product.data;
+}
+
+/**
+ * and then from the product service miniserver
+ * 
+ * productService/src/getItem.ts
+ */
+export const handler = async ({ db, input }) => db.findById(input)
+
 ```
 
 ### Example
@@ -297,6 +321,51 @@ export const handler = async ({ mongoose, input }) => {
   return res;
 }
 ```
+
+## Services
+
+Creating a microservice using miniserver is super easy.
+
+### Usage
+
+#### create the services config
+
+```typescript
+// _config.ts
+
+export const SERVICES = {
+  user: {
+    url: 'http://localhost:3000/api',
+    methods: ['users', 'userById']
+  }
+}
+```
+
+Take a look at the example above. The key **user** is the label for your service, you can name it anything. The value **url** is the url of your miniserver service. And the **methods** are the api handler that is exposed and that will be used by the service consumer.
+
+Here is the sample usage on your handler
+
+```typescript
+// src/getAllUsers.ts
+
+export const handler = async ({ services }) => {
+  const users = await services.user.users();
+
+  return users.data;
+}
+```
+
+```typescript
+// src/getUserById.ts
+
+export const handler = async ({ services, input }) => {
+ const user = await services.user.userById(input);
+
+ return user.data;
+}
+```
+
+See the [Docker Example](/example/docker-example) to see it in action.
 
 ## Advanced Configuration - _config.ts
 
