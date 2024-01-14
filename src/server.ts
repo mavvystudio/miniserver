@@ -16,9 +16,16 @@ import { handleMultipartForm } from './form.js';
 import { createJsonStr } from './utils.js';
 import { convert } from './service.js';
 import { createHandlersObject } from './handler.js';
+import * as ctx from './context.js';
 
 const defaultRootUri = '/api';
 const PORT = Number(process.env.PORT) || 3000;
+
+const createContext = (req: any) => {
+  const contextStr = ctx.extract(req);
+
+  ctx.save(contextStr);
+};
 
 export const sendError = (
   error: string,
@@ -66,8 +73,8 @@ export const handleRequest = async (
     return res.json(...sendError('not_found', 404));
   }
 
+  const dbParams = createDbParams(inputData, target.model);
   try {
-    const dbParams = createDbParams(inputData, target.model);
     const data = await target.handler({
       ...params,
       req,
@@ -75,6 +82,7 @@ export const handleRequest = async (
       input: inputData.input,
       mongoose,
       db: dbParams,
+      context: ctx,
     });
 
     res.json({ data });
@@ -169,6 +177,8 @@ const httpServerOnRequest =
       res.end();
       return;
     }
+
+    createContext(req);
 
     Object.assign(res, json(res));
     Object.assign(req, bodyParser(req));

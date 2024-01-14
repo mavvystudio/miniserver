@@ -8,7 +8,9 @@ const privateNames = ['index', '_config', '_schema'];
  * is an Object that has contains
  * handler and model.
  */
-export const createHandlersObject = (handlers: Handler[]) =>
+export const createHandlersObject = (
+  handlers: Handler[],
+): { [k: string]: any } =>
   handlers.reduce((prev, current) => {
     const isPrivate = privateNames.includes(current.name);
     const invalidHandler = !current.name || !current.handler;

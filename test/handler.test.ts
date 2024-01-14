@@ -10,5 +10,6 @@ describe('handler', () => {
       },
     ];
     const result = handlerModule.createHandlersObject(handlers);
+    expect(result.foo).toBeTruthy();
   });
 });

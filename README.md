@@ -366,6 +366,32 @@ export const handler = async ({ services, input }) => {
 
 See the [Docker Example](/example/docker-example) to see it in action.
 
+### Services Context
+
+Shared context among your services
+
+Example:
+
+Product Service
+```typescript
+export const handler = async ({ services, context }) => {
+  context.add('myData', 'foo');
+  const result = await services.review.getData();
+
+  return result.data;
+}
+```
+
+Review Service
+```typescript
+// src/getData.ts
+export const handler = ({ context }) => {
+  const ctx = context.data();
+
+  return `Data = ${ctx.myData}`; // returns "Data = foo"
+}
+```
+
 ## Advanced Configuration - _config.ts
 
 ### PRE_INIT hook

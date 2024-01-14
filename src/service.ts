@@ -1,4 +1,5 @@
 import type { ServiceItem, Services } from './types';
+import * as ctx from './context.js';
 
 export const fetcher = async (
   name: string,
@@ -11,6 +12,7 @@ export const fetcher = async (
     headers: {
       'Content-Type': 'application/json',
       ...(headers || {}),
+      [ctx.headerKey]: ctx.toString(),
     },
     body: JSON.stringify({
       handler: name,
@@ -32,7 +34,7 @@ const createServices = (s: null | ServiceItem[]) => {
       [current.name]: (current.methods || []).reduce(
         (p, c) => ({
           ...p,
-          [c]: (input?: any) => fetcher(c, current.url, input),
+          [c]: (input?: any, h?: any) => fetcher(c, current.url, input, h),
         }),
         {},
       ),
@@ -59,16 +61,11 @@ const getServices = (services: Services) => {
   return servicesData;
 };
 
+/**
 const applyContext =
   (services: Services) =>
   async ({ req }: { req: any }) => {
-    const authorization = req.headers.authorization;
-
-    if (!authorization) {
-      return '';
-    }
-
-    const token = authorization.replace('Bearer ', '');
+    const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {
       return '';
@@ -82,6 +79,7 @@ const applyContext =
 
     return res.data;
   };
+*/
 
 export function convert(services?: Services | null) {
   if (!services) {
@@ -92,10 +90,13 @@ export function convert(services?: Services | null) {
 
   const param = { services: servicesData };
 
+  /**
   const context = applyContext(services);
+   */
 
   return {
     param,
-    context,
+
+    // context,
   };
 }
