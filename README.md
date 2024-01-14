@@ -126,8 +126,7 @@ Set type to module and add start script
     "target": "es2020",
     "module": "esnext",
     "moduleResolution": "node",
-    "esModuleInterop": true,
-    "types": ["node"]
+    "esModuleInterop": true
   }
 }
 ```
