@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/mavvy22/miniserver/compare/v1.7.8...v1.8.0) (2024-01-14)
+
+
+### Features
+
+* service context ([adf9aa8](https://github.com/mavvy22/miniserver/commit/adf9aa84c7745b81447d5093ee3bc7e4fb74ddb1))
+
 ## [1.7.8](https://github.com/mavvy22/miniserver/compare/v1.7.7...v1.7.8) (2024-01-08)
 
 
