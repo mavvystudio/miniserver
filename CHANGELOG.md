@@ -1,3 +1,10 @@
+## [1.9.2](https://github.com/mavvy22/miniserver/compare/v1.9.1...v1.9.2) (2024-01-15)
+
+
+### Bug Fixes
+
+* remove authorization header from jwt ([c830e0c](https://github.com/mavvy22/miniserver/commit/c830e0c430a147d7d1342565ce88c31d4336c9e6))
+
 ## [1.9.1](https://github.com/mavvy22/miniserver/compare/v1.9.0...v1.9.1) (2024-01-15)
 
 
