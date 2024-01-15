@@ -35,20 +35,6 @@ const decode = async (token: string) => {
 };
 
 /**
- * Get the authorization bearer
- */
-export const getBearer = (authorization?: string) => {
-  return authorization?.split(' ')[1];
-};
-
-/**
  * Will verify and decode the token.
  */
-export const verifyAndDecode = (req: any) => {
-  const bearer = getBearer(req.headers.authorization);
-
-  if (!bearer) {
-    return undefined;
-  }
-  return decode(bearer);
-};
+export const verifyAndDecode = (token: string) => decode(token);

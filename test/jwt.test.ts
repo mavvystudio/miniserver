@@ -24,7 +24,7 @@ describe('jwt', () => {
   it('should verify and decode', async () => {
     const spy = jest.spyOn(jsonwebtoken, 'verify');
     const decodeSpy = jest.spyOn(jsonwebtoken, 'decode');
-    await jwt.verifyAndDecode({ headers: { authorization: 'Bearer TOKEN' } });
+    await jwt.verifyAndDecode('TOKEN');
 
     expect(spy).toHaveBeenCalledWith('TOKEN', 'secret');
     expect(decodeSpy).toHaveBeenCalledWith('TOKEN', { complete: true });

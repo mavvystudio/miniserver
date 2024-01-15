@@ -438,7 +438,8 @@ Sample code:
 ```typescript
 // src/_config.ts
 export const AUTH_HANDLER = async ({ req, jwt, db }) => {
-  const jwtData = await jwt.verifyAndDecode(req);
+  const token = req.headers.authorization?.split(' ')[1];
+  const jwtData = await jwt.verifyAndDecode(token);
 
   if (!jwtData) {
     throw new Error('unauthorized');
