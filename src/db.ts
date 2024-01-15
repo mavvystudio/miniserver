@@ -52,21 +52,21 @@ export const createDbParams = (
   handlerModel?: string,
 ) => {
   const modelName = handlerModel || getModelFromHandler(inputData.handler);
-  const model = createMongooseModel(modelName);
+  const model = (m?: string) => createMongooseModel(m || modelName);
 
   return {
     modelName,
     model,
-    create: async (input?: any) => model?.create(input || inputData.input),
+    create: async (input?: any) => model()?.create(input || inputData.input),
     update: async (input?: { id: string } & {}) => {
       const updateInput = input || inputData.input;
       const { id, ...data } = updateInput;
-      const item = await model?.findById(id);
+      const item = await model()?.findById(id);
       Object.assign(item, data);
       const res = await item.save();
       return res;
     },
-    findById: (id?: string) => model?.findById(id || inputData.input.id),
+    findById: (id?: string) => model()?.findById(id || inputData.input.id),
   };
 };
 

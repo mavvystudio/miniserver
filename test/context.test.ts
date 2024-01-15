@@ -8,6 +8,9 @@ describe('context', () => {
   });
 
   it('should add an item to the context', () => {
+    ctx.clear();
+    expect(ctx.data()).toEqual({});
+
     ctx.add('foo', true);
     let data = ctx.data();
     expect(data.foo).toBe(true);

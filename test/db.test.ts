@@ -38,7 +38,7 @@ describe('db', () => {
         'User',
       );
       expect(result.modelName).toBe('User');
-      expect(result.model?.modelName).toBe('User');
+      expect(result.model()?.modelName).toBe('User');
       expect(result.create).toBeInstanceOf(Function);
       expect(result.update).toBeInstanceOf(Function);
       expect(result.findById).toBeInstanceOf(Function);

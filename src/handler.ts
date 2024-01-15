@@ -22,6 +22,7 @@ export const createHandlersObject = (
       [current.name]: {
         handler: current.handler,
         model: current.model,
+        roles: current.roles,
       },
     };
   }, {});

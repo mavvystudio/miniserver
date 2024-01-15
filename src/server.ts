@@ -17,6 +17,7 @@ import { createJsonStr } from './utils.js';
 import { convert } from './service.js';
 import { createHandlersObject } from './handler.js';
 import * as ctx from './context.js';
+import * as auth from './auth.js';
 
 const defaultRootUri = '/api';
 const PORT = Number(process.env.PORT) || 3000;
@@ -48,19 +49,27 @@ export const handlePreInit = async (
   }
 };
 
-export const handleRequest = async (
+export const handleRequest = async ({
+  handler,
+  req,
+  res,
+  services,
+  config,
+}: {
   handler: {
     [k: string]: {
       handler: (
         params: HandlerParams,
       ) => Promise<{ data: null | any; error: string | null }>;
       model?: string;
+      roles?: string[];
     };
-  },
-  params: any,
-  req: Req,
-  res: Res,
-) => {
+  };
+  services: any;
+  req: Req;
+  res: Res;
+  config?: Config;
+}) => {
   const inputData = await req.input;
 
   if (!inputData) {
@@ -74,9 +83,20 @@ export const handleRequest = async (
   }
 
   const dbParams = createDbParams(inputData, target.model);
+
   try {
+    await auth.handleAuth({
+      db: dbParams,
+      req,
+      res,
+      config,
+      services,
+      roles: target.roles,
+    });
+    auth.verifyContextRole(target.roles);
+
     const data = await target.handler({
-      ...params,
+      ...services,
       req,
       res,
       input: inputData.input,
@@ -169,7 +189,8 @@ export const createRootUri = (config: Config) => {
 };
 
 const httpServerOnRequest =
-  (config: Config, handlersObj: any, params: any) => (req: Req, res: Res) => {
+  (config: Config, handlersObj: any, params: { services: any }) =>
+  (req: Req, res: Res) => {
     handleCors(res, config);
 
     if (req.method === 'OPTIONS') {
@@ -187,7 +208,13 @@ const httpServerOnRequest =
     const isValidRequest = validateRequest(req, rootUri);
 
     if (isValidRequest) {
-      handleRequest(handlersObj, params, req, res);
+      handleRequest({
+        handler: handlersObj,
+        services: params.services,
+        req,
+        res,
+        config,
+      });
     } else {
       res.json(...sendError('not_allowed', 400));
     }

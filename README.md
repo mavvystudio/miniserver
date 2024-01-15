@@ -8,6 +8,7 @@ Creating a Nodejs server should be easy. Keep It Super Simple right?
 - File upload via multipart form supported, no need to install middlewares.
 - Mongoose supported out of the box, with utility functions.
 - Miscroservices integration with other miniservers. see [Miscroservice Example](/example/docker-example)
+- Authentication supported via `jsonwebtoken`, but you can use anything you prefer.
 
 ## Preview
 
@@ -423,4 +424,46 @@ export const ROOT_URI = '/foo';
 // src/_config.ts
 
 export const DISABLE_CORS = true;
+```
+
+### Authentication
+
+Authentication via jwt parsing on headers authorization bearer.
+Jwt utilities and db is available as parameters. It is required to return an object with fields of `id`, which is the user id. and the `role`.
+
+The `role` could be any string value, it depends on your preferences.
+
+Sample code:
+
+```typescript
+// src/_config.ts
+export const AUTH_HANDLER = async ({ req, jwt, db }) => {
+  const jwtData = await jwt.verifyAndDecode(req);
+
+  if (!jwtData) {
+    throw new Error('unauthorized');
+  }
+
+  const user = await db
+    .model('User')
+    .findOne({ clientToken: jwtData.payload.clientToken });
+
+  if (!user) {
+    throw new Error('unauthorized_token');
+  }
+
+  return { id: user.id, role: user.role };
+};
+```
+
+Usage on the handler:
+
+export the `roles`. which is an array of strings, those roels will have access to the api.
+
+```typescript
+export const roles = ['ADMIN'];
+
+export const handler = async () => {
+  return 'authorized api'
+}
 ```

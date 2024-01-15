@@ -6,6 +6,7 @@ export type Config = {
   SERVICES?: Services;
   ROOT_URI?: string;
   DISABLE_CORS?: boolean;
+  AUTH_HANDLER?: (...params: any) => Promise<any>;
 };
 
 export type ServiceItem = {
@@ -18,6 +19,7 @@ export type Handler = {
   name: string;
   handler: Function;
   model?: string | null;
+  roles?: string[];
 };
 
 export type Res = http.ServerResponse & {
@@ -48,16 +50,14 @@ export type HandlerParams<T = any> = {
   mongoose: typeof mongoose;
   db: {
     modelName?: string | null;
-    model: mongoose.Model<any> | null;
+    model: (name?: string) => mongoose.Model<any> | null;
     create: (input?: T) => Promise<any>;
     update: (input?: T) => Promise<any>;
     findById: (id?: string) => undefined | Promise<any>;
   };
 };
 
-export type HandlerFn<T = any> = (
-  params: HandlerParams<T>,
-) => Promise<{ data: null | any; error: null | string }>;
+export type HandlerFn<T = any> = (params: HandlerParams<T>) => Promise<any>;
 
 export type Services = { [k: string]: Omit<ServiceItem, 'name'> };
 

@@ -1,7 +1,10 @@
 import * as server from '../src/server';
 import * as form from '../src/form';
+import * as auth from '../src/auth';
 
 jest.mock('../src/form');
+jest.mock('../src/auth');
+
 const req = {
   headers: {
     'content-type': 'multipart/form-data',
@@ -38,7 +41,7 @@ describe('server', () => {
 
   describe('handleRequest', () => {
     const res: any = { json: (data: any, status: any) => ({ data, status }) };
-    const params = { foo: true };
+    const params: any = { foo: true };
     const handler: any = {
       fiz: {
         handler: () => 'foo',
@@ -51,7 +54,12 @@ describe('server', () => {
       const reqErr: any = {
         input: new Promise((resolve) => resolve(null)),
       };
-      await server.handleRequest(handler, params, reqErr, res);
+      await server.handleRequest({
+        handler,
+        services: params,
+        req: reqErr,
+        res,
+      });
       expect(spy).toHaveBeenCalledWith(
         { data: null, error: 'server_error' },
         { status: 500 },
@@ -62,7 +70,7 @@ describe('server', () => {
       const req: any = {
         input: new Promise((resolve) => resolve({ handler: 'baz' })),
       };
-      await server.handleRequest(handler, params, req, res);
+      await server.handleRequest({ handler, services: params, req, res });
       expect(spy).toHaveBeenCalledWith(
         { data: null, error: 'not_found' },
         { status: 404 },
@@ -80,7 +88,12 @@ describe('server', () => {
           },
         },
       };
-      await server.handleRequest(handlerErr, params, req, res);
+      await server.handleRequest({
+        handler: handlerErr,
+        services: params,
+        req,
+        res,
+      });
       expect(spy).toHaveBeenCalledWith(
         { data: null, error: 'err_message' },
         { status: 400 },
@@ -92,9 +105,28 @@ describe('server', () => {
         input: new Promise((resolve) => resolve({ handler: 'fiz' })),
       };
 
-      await server.handleRequest(handler, params, req, res);
+      await server.handleRequest({ handler, services: params, req, res });
 
       expect(spy).toHaveBeenCalledWith({ data: 'foo' });
+    });
+
+    it('should call auth functions', async () => {
+      const req: any = {
+        input: new Promise((resolve) => resolve({ handler: 'fiz' })),
+      };
+      const handleAuthSpy = jest
+        .spyOn(auth, 'handleAuth')
+        .mockImplementation(
+          (_params: any) => new Promise<any>((resolve) => resolve(true)),
+        );
+      const verifyContextRoleSpy = jest
+        .spyOn(auth, 'verifyContextRole')
+        .mockImplementation((_roles: any) => true);
+
+      await server.handleRequest({ handler, services: params, req, res });
+
+      expect(handleAuthSpy).toHaveBeenCalled();
+      expect(verifyContextRoleSpy).toHaveBeenCalled();
     });
   });
 
