@@ -41,17 +41,10 @@ export const handleAuth = async (o: {
   if (!o.roles || !o.roles.length) {
     return false;
   }
-  const { authorization } = o.req.headers;
 
   if (!o.config?.AUTH_HANDLER) {
     throw new Error('unhandled_authorization');
   }
-
-  if (!authorization) {
-    throw new Error('invalid_authorization_header');
-  }
-
-  const bearer = o.req.headers.authorization?.split(' ')[1];
 
   const data = await o.config.AUTH_HANDLER({
     jwt,
@@ -62,7 +55,6 @@ export const handleAuth = async (o: {
     roles: o.roles,
     db: o.db,
     mongoose,
-    bearer,
   });
 
   addUserContext(ctx)(data.id, data.role);

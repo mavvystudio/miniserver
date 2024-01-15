@@ -56,18 +56,6 @@ describe('auth', () => {
       }).rejects.toThrowError('unhandled_authorization');
     });
 
-    it('should throw an error if authorization is undefined', () => {
-      const params: any = {
-        req: { headers: { authorization: undefined } },
-        config: { AUTH_HANDLER: async () => {} },
-        roles: ['ADMIN'],
-      };
-
-      expect(() => {
-        return auth.handleAuth(params);
-      }).rejects.toThrowError('invalid_authorization_header');
-    });
-
     it('should call the AUTH_HANDLER', async () => {
       const params: any = {
         req: {

@@ -66,7 +66,7 @@ How about microservices?
 
 ```typescript
 /**
- * main service miniserver
+ * main service miniserver running on port 3000
  * 
  * mainService/src/someApi.ts
  */
@@ -77,7 +77,7 @@ export const handler = async ({ services, input }) => {
 }
 
 /**
- * and then from the product service miniserver
+ * and then from the product service miniserver running on port 3002
  * 
  * productService/src/getItem.ts
  */
