@@ -1,3 +1,10 @@
+## [1.9.1](https://github.com/mavvy22/miniserver/compare/v1.9.0...v1.9.1) (2024-01-15)
+
+
+### Bug Fixes
+
+* remove authorization header checking on auth ([6938d0b](https://github.com/mavvy22/miniserver/commit/6938d0b218dede5d804f5c7bc343c79bd235ddc5))
+
 # [1.9.0](https://github.com/mavvy22/miniserver/compare/v1.8.0...v1.9.0) (2024-01-15)
 
 
