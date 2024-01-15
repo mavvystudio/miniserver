@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/mavvy22/miniserver/compare/v1.8.0...v1.9.0) (2024-01-15)
+
+
+### Features
+
+* add auth ([eaeef26](https://github.com/mavvy22/miniserver/commit/eaeef265a230ccbf74120f6b6c5b4d7da309da7d))
+
 # [1.8.0](https://github.com/mavvy22/miniserver/compare/v1.7.8...v1.8.0) (2024-01-14)
 
 
