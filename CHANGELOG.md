@@ -1,3 +1,10 @@
+## [1.9.3](https://github.com/mavvy22/miniserver/compare/v1.9.2...v1.9.3) (2024-01-16)
+
+
+### Bug Fixes
+
+* remove db logs ([f70f945](https://github.com/mavvy22/miniserver/commit/f70f94506f44d1cb2d71df61b2766e5a168fccf4))
+
 ## [1.9.2](https://github.com/mavvy22/miniserver/compare/v1.9.1...v1.9.2) (2024-01-15)
 
 
