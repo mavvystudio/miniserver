@@ -76,7 +76,7 @@ export const createDbParams = (
  */
 export const initDb = async (uri?: string) => {
   if (!uri) {
-    console.log('no_mongo_uri_found');
+    // console.log('no_mongo_uri_found');
     return false;
   }
   const db = await mongoose.connect(uri);
@@ -89,7 +89,7 @@ export const initDb = async (uri?: string) => {
  */
 export const initModels = (schema: AppSchema[]) => {
   if (!schema) {
-    console.log('no_schema_found');
+    // console.log('no_schema_found');
     return false;
   }
   schema.forEach((item) => {
