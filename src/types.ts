@@ -7,6 +7,7 @@ export type Config = {
   ROOT_URI?: string;
   DISABLE_CORS?: boolean;
   AUTH_HANDLER?: (...params: any) => Promise<any>;
+  MONGOOSE_CONNECT_OPTIONS?: mongoose.ConnectOptions;
 };
 
 export type ServiceItem = {

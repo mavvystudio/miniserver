@@ -74,12 +74,15 @@ export const createDbParams = (
  * Initialize mongoose db connection. Returns false
  * if env MONGO_URI is not present.
  */
-export const initDb = async (uri?: string) => {
+export const initDb = async (
+  uri?: string,
+  options?: mongoose.ConnectOptions,
+) => {
   if (!uri) {
     // console.log('no_mongo_uri_found');
     return false;
   }
-  const db = await mongoose.connect(uri);
+  const db = await mongoose.connect(uri, options);
   console.log('connected_to_db');
   return db;
 };
