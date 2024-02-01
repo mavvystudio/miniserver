@@ -55,7 +55,7 @@ describe('db', () => {
         .spyOn(mongoose, 'connect')
         .mockReturnValue(new Promise((resolve) => resolve(true as any)));
       db.initDb('foo');
-      expect(spy).toHaveBeenCalledWith('foo');
+      expect(spy).toHaveBeenCalledWith('foo', undefined);
     });
   });
 
