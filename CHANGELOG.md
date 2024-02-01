@@ -1,3 +1,10 @@
+## [1.9.4](https://github.com/mavvy22/miniserver/compare/v1.9.3...v1.9.4) (2024-02-01)
+
+
+### Bug Fixes
+
+* add mongoose connect options ([da01385](https://github.com/mavvy22/miniserver/commit/da01385090eace116e4365b24ca914c9d976e10d))
+
 ## [1.9.3](https://github.com/mavvy22/miniserver/compare/v1.9.2...v1.9.3) (2024-01-16)
 
 
