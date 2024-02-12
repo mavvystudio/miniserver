@@ -4,88 +4,49 @@ Creating a Nodejs server should be easy. Keep It Super Simple right?
 
 ## Features
 
-- Filename based api *(Inspired by Nextjs api routes)*.
-- File upload via multipart form supported, no need to install middlewares.
-- Mongoose supported out of the box, with utility functions.
-- Miscroservices integration with other miniservers. see [Miscroservice Example](/example/docker-example)
-- Authentication supported via `jsonwebtoken`, but you can use anything you prefer.
+- **Filename-based api:** Inspired by Next.js API routes, allowing you to organize your APIs based on file names.
+- **Multipart Form File Upload:** Support for file uploads via multipart forms without the need for additional middleware.
+- **Built-in Mongoose Support:** Easily integrate with MongoDB using Mongoose with utility functions.
+- **Microservices Integration:** Seamlessly integrate with other MiniServers to build microservices architecture. see [Miscroservice Example](/example/docker-example)
+- **Authentication Support:** Authentication capabilities using `jsonwebtoken`, while offering flexibility for other authentication methods.
 
 ## Preview
 
-See this code snippet:
+Check out the code snippet below for a quick overview:
 
 ```typescript
-/**
-* For example, if you have a multipart-form data similar to this:
-*
-*  handler = myFileUpload
-*  myImage = my_image.png
-*
-* And then,
-* Your api file should be located at src/myFileUpload.ts
-* see the filename should be the same as your "handler"
-* field on your multipart form data.
-*/
 import fs from 'fs';
 
 export const handler = ({ input }) => {
-  /**
-  * this will create a file to the root directory and
-  * name the file img.png
-  */
   fs.writeFileSync('img.png', input.myImage.fileData);
 }
 ```
 
-The form data is in the input parameter, which can be accessed right away from the function - See no imports and no middleware Mom!, just plain simple right?
+In this example, the form data is available in the input parameter, allowing direct access within the function. No imports or middleware needed, just plain simplicity!
 
-How about mongoose crud?
+## Handling Mongoose CRUD Operations
 
 ```typescript
-// src/addProduct.ts
-
 export const handler = async ({ db }) => db.create();
 ```
 
-The above code snippet will add data to the mongo database. But where's the input? Believe me, it's in there, you don't need to explicitly add it, the handler knows your input data.
-
-Want to see the long version?
-
-```typescript
-// src/addProduct.ts
-
-export const handler = async ({ mongoose, input }) => {
-  const model = mongoose.model('Product');
-  const res = await model.create(input);
-
-  return res;
-}
-```
+This code snippet adds data to the MongoDB database. The handler automatically detects input data, simplifying the development process.
 
 How about microservices?
 
 ```typescript
-/**
- * main service miniserver running on port 3000
- * 
- * mainService/src/someApi.ts
- */
+// mainService/src/someApi.ts
 export const handler = async ({ services, input }) => {
   const product = await services.products.getItem(input.id);
-
   return product.data;
 }
 
-/**
- * and then from the product service miniserver running on port 3002
- * 
- * productService/src/getItem.ts
- */
-export const handler = async ({ db, input }) => db.findById(input)
+// productService/src/getItem.ts
+export const handler = async ({ db, input }) => db.findById(input);
 
 ```
 
-### Example
+## Example
 see examples directory [example](/example)
 
 ## Getting Started
@@ -134,12 +95,13 @@ Set type to module and add start script
 
 #### .env
 
-Optional. You can skip this step, the default PORT is 3000.
+Set optional environment variables, such as `PORT`.
+
 ```bash
 export PORT = 3333
 ```
 
-### Create your API
+### Creating your API
 
 ```javascript
 // src/greet.ts
@@ -151,7 +113,7 @@ export async function handler() {
 
 ### Usage
 
-Client side request
+Perform client-side requests using fetch:
 
 ```javascript
 fetch('http://localhost:3000/api', {
@@ -174,9 +136,9 @@ returns:
 }
 ```
 
-## Everything is a POST request - simple yet effective!
+## Everything is a POST Request - Simple yet Effective!
 
-All requests are POSTs, so you don't need to worry about any other things - query parameters, routes, payload, url encoding, etc. You can just focus on what features are you going to make.
+All requests are POSTs, eliminating concerns about query parameters, routes, payload, URL encoding, etc.
 
 #### Handling inputs
 ```javascript
