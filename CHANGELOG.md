@@ -1,3 +1,10 @@
+## [1.9.5](https://github.com/mavvy22/miniserver/compare/v1.9.4...v1.9.5) (2024-03-04)
+
+
+### Bug Fixes
+
+* make config optional on MONGOOSE_CONNECT_OPTIONS ([6d22adf](https://github.com/mavvy22/miniserver/commit/6d22adf2e957c2f734b19a5f8c2a7e8284b8e61b))
+
 ## [1.9.4](https://github.com/mavvy22/miniserver/compare/v1.9.3...v1.9.4) (2024-02-01)
 
 
