@@ -232,7 +232,7 @@ export const serve = async (
     services: servicesData ? servicesData.param.services : undefined,
   };
 
-  await initDb(process.env.MONGO_URI, config.MONGOOSE_CONNECT_OPTIONS);
+  await initDb(process.env.MONGO_URI, config?.MONGOOSE_CONNECT_OPTIONS);
 
   initModels(schema);
 
