@@ -119,11 +119,11 @@ Perform client-side requests using fetch:
 fetch('http://localhost:3000/api', {
   method: 'POST',
   headers: {
-    'Content-Type': 'application/json',
-    body: JSON.stringify({
-      "handler": "greet",
-    })
-  }
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    "handler": "greet",
+  })
 })
 
 ```
@@ -154,13 +154,13 @@ fetch('http://localhost:3000/api', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    body: JSON.stringify({
+  },
+  body: JSON.stringify({
       "handler": "addProduct",
       "input": {
         "name": "foo"
       }
     })
-  }
 })
 ```
 
