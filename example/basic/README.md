@@ -23,10 +23,7 @@ fetch('http://localhost:3000/api', {
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    handler: 'addProduct',
-    input: {
-      name: 'Foo'
-    }
+    handler: 'greet'
   })
 })
 ```
