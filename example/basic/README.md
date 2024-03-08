@@ -19,7 +19,9 @@ export MONGO_URI = YOUR_MONGO_URI
 ```javascript
 fetch('http://localhost:3000/api', {
   method: 'POST',
-  'Content-Type': 'application/json',
+  headers: {
+    'Content-Type': 'application/json'
+  },
   body: JSON.stringify({
     handler: 'addProduct',
     input: {
