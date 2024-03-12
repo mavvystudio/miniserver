@@ -96,7 +96,7 @@ export const handleRequest = async ({
     auth.verifyContextRole(target.roles);
 
     const data = await target.handler({
-      ...services,
+      services,
       req,
       res,
       input: inputData.input,
