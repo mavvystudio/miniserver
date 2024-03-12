@@ -1,3 +1,11 @@
+## [1.9.6](https://github.com/mavvy22/miniserver/compare/v1.9.5...v1.9.6) (2024-03-12)
+
+
+### Bug Fixes
+
+* add context and services type ([5b9051e](https://github.com/mavvy22/miniserver/commit/5b9051e90b613ed551ebebdf1a9028d042202736))
+* remove spread services ([b050bbd](https://github.com/mavvy22/miniserver/commit/b050bbd6fa6a79564fb3fab23d9971865a6b31b4))
+
 ## [1.9.5](https://github.com/mavvy22/miniserver/compare/v1.9.4...v1.9.5) (2024-03-04)
 
 
