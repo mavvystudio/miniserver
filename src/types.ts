@@ -49,6 +49,8 @@ export type HandlerParams<T = any> = {
   res: Res;
   input?: T;
   mongoose: typeof mongoose;
+  services?: any;
+  context?: any;
   db: {
     modelName?: string | null;
     model: (name?: string) => mongoose.Model<any> | null;
