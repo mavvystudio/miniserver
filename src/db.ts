@@ -67,6 +67,8 @@ export const createDbParams = (
       return res;
     },
     findById: (id?: string) => model()?.findById(id || inputData.input.id),
+    deleteOne: (id?: string) => model()?.deleteOne(id || inputData.input.id),
+    find: (filter?: any, projection?: any) => model()?.find(filter, projection),
   };
 };
 
