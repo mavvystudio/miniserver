@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/mavvy22/miniserver/compare/v1.9.6...v1.10.0) (2024-04-02)
+
+
+### Features
+
+* add deleteOne and find on db utils ([74386e7](https://github.com/mavvy22/miniserver/commit/74386e71763032411dc24c8d6eb4c65979db792c))
+
 ## [1.9.6](https://github.com/mavvy22/miniserver/compare/v1.9.5...v1.9.6) (2024-03-12)
 
 
