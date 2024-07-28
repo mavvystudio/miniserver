@@ -7,7 +7,7 @@ import { execSync, spawn } from 'child_process';
 
 const schemaFile = '_schema.js';
 const serverFile = '_config.js';
-const buildDir = '.miniserver';
+const buildDir = process.env.BUILD_DIR || '.miniserver';
 const argv = process.argv;
 
 const build = () => {
