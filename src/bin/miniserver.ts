@@ -10,7 +10,7 @@ const serverFile = '_config.js';
 const buildDir = '.miniserver';
 const argv = process.argv;
 
-if (argv[2] === 'start') {
+const build = () => {
   fse.emptyDirSync(buildDir);
   execSync(`tsc --outDir "${buildDir}"`);
 
@@ -30,7 +30,10 @@ init();
   const filePath = path.join(buildDir, 'index.js');
 
   fs.writeFileSync(filePath, fileContent);
+};
 
+if (argv[2] === 'start') {
+  build();
   const runner = spawn(`node ${buildDir}/index.js`, { shell: true });
 
   runner.stdout.on('data', (data) => console.log(data.toString()));
@@ -39,4 +42,8 @@ init();
   process.on('SIGINT', () => {
     process.exit();
   });
+}
+
+if (argv[2] === 'build') {
+  build();
 }
