@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/mavvy22/miniserver/compare/v1.11.0...v1.12.0) (2024-07-28)
+
+
+### Features
+
+* add env build dir ([0a3e5fd](https://github.com/mavvy22/miniserver/commit/0a3e5fd16fa4c883afaf798aecf9302b651e1aff))
+
 # [1.11.0](https://github.com/mavvy22/miniserver/compare/v1.10.0...v1.11.0) (2024-07-28)
 
 
