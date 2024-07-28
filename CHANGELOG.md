@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/mavvy22/miniserver/compare/v1.10.0...v1.11.0) (2024-07-28)
+
+
+### Features
+
+* add build on bin ([8139b1b](https://github.com/mavvy22/miniserver/commit/8139b1b5eb73ec4581b12134796048d042381fd3))
+
 # [1.10.0](https://github.com/mavvy22/miniserver/compare/v1.9.6...v1.10.0) (2024-04-02)
 
 
