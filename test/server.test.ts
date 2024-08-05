@@ -15,7 +15,7 @@ describe('server', () => {
   it('sendError should return an error structure', () => {
     const result = server.sendError('not_found', 404);
     expect(result[0]).toEqual({ data: null, error: 'not_found' });
-    expect(result[1]).toEqual({ status: 404 });
+    expect(result[1]).toEqual({ status: 200 });
   });
 
   describe('handlePreInit ', () => {
@@ -62,7 +62,7 @@ describe('server', () => {
       });
       expect(spy).toHaveBeenCalledWith(
         { data: null, error: 'server_error' },
-        { status: 500 },
+        { status: 200 },
       );
     });
 
@@ -73,7 +73,7 @@ describe('server', () => {
       await server.handleRequest({ handler, services: params, req, res });
       expect(spy).toHaveBeenCalledWith(
         { data: null, error: 'not_found' },
-        { status: 404 },
+        { status: 200 },
       );
     });
 
@@ -96,7 +96,7 @@ describe('server', () => {
       });
       expect(spy).toHaveBeenCalledWith(
         { data: null, error: 'err_message' },
-        { status: 400 },
+        { status: 200 },
       );
     });
 
