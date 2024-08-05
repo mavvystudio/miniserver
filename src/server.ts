@@ -73,13 +73,13 @@ export const handleRequest = async ({
   const inputData = await req.input;
 
   if (!inputData) {
-    return res.json(...sendError('server_error', 500));
+    return res.json(...sendError('server_error', 200));
   }
 
   const target = handler[inputData.handler];
 
   if (!target) {
-    return res.json(...sendError('not_found', 404));
+    return res.json(...sendError('not_found', 200));
   }
 
   const dbParams = createDbParams(inputData, target.model);
@@ -107,7 +107,7 @@ export const handleRequest = async ({
 
     res.json({ data });
   } catch (e: any) {
-    res.json(...sendError(e.message, 400));
+    res.json(...sendError(e.message, 200));
   }
 };
 
@@ -216,7 +216,7 @@ const httpServerOnRequest =
         config,
       });
     } else {
-      res.json(...sendError('not_allowed', 400));
+      res.json(...sendError('not_allowed', 200));
     }
   };
 
