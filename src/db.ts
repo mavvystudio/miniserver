@@ -32,6 +32,7 @@ export const getModelFromHandler = (handler: string) => {
   return target;
 };
 
+// creates a mongo model
 export const createMongooseModel = (modelName?: string | null) => {
   if (modelName) {
     try {
