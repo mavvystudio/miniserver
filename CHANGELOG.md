@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/mavvy22/miniserver/compare/v1.13.0...v1.14.0) (2024-08-15)
+
+
+### Features
+
+* move dotenv ([44a7f1f](https://github.com/mavvy22/miniserver/commit/44a7f1fbc8fdda1f46157768364c95a248b6b377))
+
 # [1.13.0](https://github.com/mavvy22/miniserver/compare/v1.12.0...v1.13.0) (2024-08-05)
 
 
