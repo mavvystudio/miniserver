@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import 'dotenv/config';
 import * as fs from 'fs';
 import fse from 'fs-extra';
 import path from 'path';

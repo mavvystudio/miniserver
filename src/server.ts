@@ -125,7 +125,7 @@ export const generateInput = (req: http.IncomingMessage) => {
         const d = JSON.parse(body);
         resolve(d);
       } catch (e) {
-        console.log('body_parse_error', body);
+        console.log('body_parse_error:body', body);
         resolve(null);
       }
       return null;
@@ -139,7 +139,7 @@ export const generateInput = (req: http.IncomingMessage) => {
         const d = JSON.parse(data.join(''));
         resolve(d);
       } catch (e) {
-        console.log('body_parse_error', data);
+        console.log('body_parse_error:data', data);
         resolve(null);
       }
     });
