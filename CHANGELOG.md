@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/mavvy22/miniserver/compare/v1.12.0...v1.13.0) (2024-08-05)
+
+
+### Features
+
+* trigger update. status code fix ([038a236](https://github.com/mavvy22/miniserver/commit/038a2369f2b98efe4c2d8e4d148fac46aa8bc027))
+
 # [1.12.0](https://github.com/mavvy22/miniserver/compare/v1.11.0...v1.12.0) (2024-07-28)
 
 
